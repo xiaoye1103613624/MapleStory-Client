@@ -307,6 +307,10 @@ namespace ms
 			/// UIAuthenticForce.img/AutEquip，@force 入口，C→S 0x3780 / S→C 0x3781）。
 			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
 			FORCE,
+			/// 197 TMS280 公会技能窗（UIGuildSkill；GuildUI2.img/guild/main/pages/guildSkill，
+			/// @guildskill 入口，C→S 0x3790 / S→C 0x3791..0x3792）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			GUILDSKILL,
 			NUM_TYPES
 		};
 

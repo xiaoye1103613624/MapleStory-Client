@@ -47,6 +47,7 @@
 #include "Handlers/FamiliarHandlers.h"
 #include "Handlers/VCoreHandlers.h"
 #include "Handlers/ForceHandlers.h"
+#include "Handlers/GuildSkillHandlers.h"
 
 #include "../Configuration.h"
 
@@ -489,7 +490,13 @@ namespace ms
 		/// 197 TMS280 神秘之力/奥术之力 S→C（s9 SendOpcode / 服务端 impl-force agent）：
 		/// FORCE_INFO 0x3781：int arcaneForce + int authenticForce + int arcaneLevel
 		///                     + int authenticLevel（4×int = 16B）
-		FORCE_INFO = 0x3781
+		FORCE_INFO = 0x3781,
+		/// 197 TMS280 公会技能 S→C（s9 SendOpcode / 服务端 impl-guildskill agent）：
+		/// GUILD_SKILL_LIST   0x3791：int count + ×{int skillId, int level,
+		///                            long timestamp, string purchaser}
+		/// GUILD_SKILL_RESULT 0x3792：int mode + int code + int skillId
+		GUILD_SKILL_LIST = 0x3791,
+		GUILD_SKILL_RESULT = 0x3792
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -914,6 +921,10 @@ namespace ms
 
 		// 197 TMS280 神秘之力/奥术之力 S→C（0x3781）
 		emplace<FORCE_INFO, ForceInfoHandler>();
+
+		// 197 TMS280 公会技能 S→C 两连包（0x3791/0x3792）
+		emplace<GUILD_SKILL_LIST, GuildSkillListHandler>();
+		emplace<GUILD_SKILL_RESULT, GuildSkillResultHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -1315,6 +1326,8 @@ namespace ms
 			case 0x3771: opcode_msg = "VCORE_LIST"; break;
 			case 0x3772: opcode_msg = "VCORE_RESULT"; break;
 			case 0x3781: opcode_msg = "FORCE_INFO"; break;
+			case 0x3791: opcode_msg = "GUILD_SKILL_LIST"; break;
+			case 0x3792: opcode_msg = "GUILD_SKILL_RESULT"; break;
 			default: break;
 		}
 

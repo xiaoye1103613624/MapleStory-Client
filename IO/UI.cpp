@@ -516,6 +516,8 @@ namespace ms
 				types.emplace_back(UIElement::Type::VMATRIX);
 				// 197 神秘/奥术之力：Esc 交由 UIForce::send_key 关闭。
 				types.emplace_back(UIElement::Type::FORCE);
+				// 197 公会技能：Esc 交由 UIGuildSkill::send_key 关闭。
+				types.emplace_back(UIElement::Type::GUILDSKILL);
 				}
 				else if (enter)
 				{

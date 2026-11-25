@@ -14,6 +14,7 @@
 #include "../IO/UITypes/UIFamiliar.h"
 #include "../IO/UITypes/UIVMatrix.h"
 #include "../IO/UITypes/UIForce.h"
+#include "../IO/UITypes/UIGuildSkill.h"
 #include "../IO/UITypes/UIDamageSkinPicker.h"
 #include "../IO/UITypes/UIBeautySalon.h"
 #include "../IO/UITypes/UIAnvilDialog.h"
@@ -126,6 +127,9 @@ namespace ms
 				// 197 TMS280 神秘之力/奥术之力：此处仅注册 builtin id（@force / open_ui），
 				// 按需求不挂侧栏图标（StatusBar/原生入口由 lead 后续接）。
 				add("force", u8"神秘/奥术之力", "Force", [] { UI::get().emplace<UIForce>(); });
+				// 197 TMS280 公会技能：此处仅注册 builtin id（@guildskill / open_ui），
+				// 按需求不挂侧栏图标（公会 UI 原生入口由 lead 后续接）。
+				add("guildskill", u8"公会技能", "GuildSkill", [] { UI::get().emplace<UIGuildSkill>(); });
 
 				return t;
 			}

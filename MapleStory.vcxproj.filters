@@ -590,6 +590,12 @@
     <ClCompile Include="Net\Handlers\ForceHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIGuildSkill.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\Handlers\GuildSkillHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Net\Handlers\WorldMapHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1534,6 +1540,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Packets\ForcePackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIGuildSkill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\GuildSkillState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\GuildSkillPackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Handlers\GuildSkillHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\ForceHandlers.h">
