@@ -9,6 +9,7 @@
 #include "../IO/UITypes/UIDailyCheckin.h"
 #include "../IO/UITypes/UIDailyGift.h"
 #include "../IO/UITypes/UIDamageRank.h"
+#include "../IO/UITypes/UIBattleStats.h"
 #include "../IO/UITypes/UIDamageSkinPicker.h"
 #include "../IO/UITypes/UIBeautySalon.h"
 #include "../IO/UITypes/UIAnvilDialog.h"
@@ -77,6 +78,7 @@ namespace ms
 				add("eventwindow", u8"活动窗", "EventWindow", [] { UI::get().emplace<UIEventWindow>(); });
 				add("dailygift", u8"每日礼物", "DailyGift", [] { UI::get().emplace<UIDailyGift>(); });
 				add("damagerank", u8"伤害统计", "DamageRank", [] { UI::get().emplace<UIDamageRank>(); });
+				add("battlestats", u8"战斗统计", "BattleStats", [] { UI::get().emplace<UIBattleStats>(); });
 				add("damageskin", u8"伤害皮肤", "DamageSkin", [] { UI::get().emplace<UIDamageSkinPicker>(); });
 				add("beautysalon", u8"美容院", "BeautySalon", [] { UI::get().emplace<UIBeautySalon>(); });
 				add("fusionanvil", u8"融合外观", "FusionAnvil", [] { UI::get().emplace<UIAnvilDialog>(); });
@@ -125,6 +127,7 @@ namespace ms
 				if (k == "quest") return find_opener("questlog");
 				if (k == "daily") return find_opener("dailygift");
 				if (k == "dpt" || k == "damage") return find_opener("damagerank");
+				if (k == "battle" || k == "battlestat") return find_opener("battlestats");
 				if (k == "checkin" || k == "sign") return find_opener("dailycheckin");
 				if (k == "dye" || k == "prism") return find_opener("colorprism");
 				if (k == "forest" || k == "witch") return find_opener("witchforest");

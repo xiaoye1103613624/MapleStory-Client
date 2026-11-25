@@ -303,6 +303,17 @@
       "arg": "damagerank"
     },
     {
+      "id": "leaf_battlestats",
+      "parentId": "folder_combat",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "战斗统计",
+      "iconKey": "GalaxyStar",
+      "order": 25,
+      "action": "Builtin",
+      "arg": "battlestats"
+    },
+    {
       "id": "leaf_witch",
       "parentId": "folder_combat",
       "kind": "leaf",

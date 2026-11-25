@@ -487,6 +487,7 @@ namespace ms
 					// 三个窗口均已实现 send_key(escape→deactivate)，此前漏登记导致 ESC 落到全局开目录。
 					types.emplace_back(UIElement::Type::DAILYCHECKIN);
 					types.emplace_back(UIElement::Type::DAMAGERANK);
+					types.emplace_back(UIElement::Type::BATTLESTATS);
 					types.emplace_back(UIElement::Type::COLORPRISM);
 					// 192 ShortCutUI 横向弹层：ESC 交由其 send_key 关闭。
 					types.emplace_back(UIElement::Type::CONTENTSSHORTCUT);

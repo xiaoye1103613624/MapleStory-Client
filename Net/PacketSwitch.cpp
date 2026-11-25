@@ -326,6 +326,9 @@ namespace ms
 		MTS_OPERATION = 348,
 		UPDATE_HPMPAALERT = 0x1000,
 		DPT_TRACKER = 0x3714,
+		/// 战斗统计（192 Battle Analysis）：0x3BC=许可(1B)，0x3BD=队伍数据。
+		BATTLE_STATS_RESULT = 0x3BC,
+		BATTLE_STATS_PARTY = 0x3BD,
 		CHAT_EMOTICON = 0x3716,
 		DAILY_CHECKIN = 0x3718,
 		/// 192 每日礼物 S→C 0x3722（双端协定）：respType=0 配置快照 / =1 领奖结果。
@@ -723,6 +726,8 @@ namespace ms
 		emplace<MTS_OPERATION, MtsOperationHandler>();
 		emplace<UPDATE_HPMPAALERT, UpdateHpMpAlertHandler>();
 		emplace<DPT_TRACKER, DptTrackerHandler>();
+		emplace<BATTLE_STATS_RESULT, BattleStatsHandler>();
+		emplace<BATTLE_STATS_PARTY, BattleStatsPartyHandler>();
 		emplace<CHAT_EMOTICON, ChatEmoticonHandler>();
 		emplace<DAILY_CHECKIN, DailyCheckinHandler>();
 		emplace<DAILY_GIFT_SNAPSHOT, DailyGiftHandler>();

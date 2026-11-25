@@ -1,0 +1,148 @@
+{
+  "addr": "0x1125cd0",
+  "code": "void __thiscall CUINewBattleRecordMini::OnCreate(CUINewBattleRecordMini *this, void *pData)\n{\n  $CF3C52234FDDAA356AC280CA88973875 *v3; // edi\n  char *Buffer; // eax\n  StringPool *Instance; // eax\n  wchar_t *m_pStr; // eax\n  wchar_t *v7; // ebx\n  int v8; // eax\n  StringPool *v9; // eax\n  _bstr_t::Data_t *m_Data; // eax\n  const wchar_t *m_wstr; // ebx\n  void *v12; // esp\n  _bstr_t::Data_t *v13; // ecx\n  IWzFont *m_pInterface; // ecx\n  int v15; // ecx\n  IUIMsgHandler *p_baseclass_4; // ecx\n  void (__thiscall *SetEnable)(IUIMsgHandler *, int); // eax\n  CCtrlOriginButton *p; // ecx\n  void (__thiscall *Update)(IGObj *); // eax\n  IUIMsgHandler *v20; // ecx\n  void (__thiscall *v21)(IUIMsgHandler *, int); // eax\n  CCtrlOriginButton *v22; // ecx\n  void (__thiscall *v23)(IGObj *); // eax\n  int v24; // ecx\n  IUIMsgHandler *v25; // ecx\n  void (__thiscall *v26)(IUIMsgHandler *, int); // eax\n  CCtrlOriginButton *v27; // ecx\n  void (__thiscall *v28)(IGObj *); // eax\n  IUIMsgHandler *v29; // ecx\n  void (__thiscall *v30)(IUIMsgHandler *, int); // eax\n  CCtrlOriginButton *v31; // ecx\n  void (__thiscall *v32)(IGObj *); // eax\n  char *v33; // esi\n  _bstr_t v34; // [esp-14h] [ebp-64h] BYREF\n  unsigned int v35; // [esp-10h] [ebp-60h]\n  unsigned int v36; // [esp-Ch] [ebp-5Ch]\n  ZXString<unsigned short> v37; // [esp-8h] [ebp-58h] BYREF\n  int p_pvarg; // [esp-4h] [ebp-54h]\n  wchar_t v39[8]; // [esp+0h] [ebp-50h] BYREF\n  VARIANTARG pvarg; // [esp+10h] [ebp-40h] BYREF\n  Ztl_variant_t sStyle; // [esp+20h] [ebp-30h] BYREF\n  ZXString<char> sFontName; // [esp+30h] [ebp-20h] BYREF\n  ZXString<unsigned short> result; // [esp+34h] [ebp-1Ch] BYREF\n  ZRef<CCtrlOriginButton> thisa; // [esp+38h] [ebp-18h] BYREF\n  int v45; // [esp+4Ch] [ebp-4h]\n\n  v3 = &this->___u1; /*0x1125d01*/\n  CLayoutMan::Init(this: (CLayoutMan *)&this->___u1, pWnd: &this->baseclass_0.baseclass_0, nOffsetX: 0, nOffsetY: 0); /*0x1125d0a*/\n  CLayoutMan::AutoBuild( /*0x1125d20*/\n    this: (CLayoutMan *)v3,\n    sRootUOL: L\"UI/UIWindow4.img/battleStats/mini\",\n    nIdBase: 0,\n    nOffsetX: 0,\n    nOffsetY: 0,\n    bSetTooltip: 1,\n    bSameIDCtrl: 0);\n  CWvsContext::PushStackForTab( /*0x1125d2c*/\n    this: (CWvsContext *)TSingleton<CWvsContext>::ms_pInstance.baseclass_0.m_Data,\n    item: &this->baseclass_0.baseclass_0);\n  p_pvarg = 0; /*0x1125d31*/\n  result._m_pStr = (wchar_t *)&v37; /*0x1125d36*/\n  v37._m_pStr = 0; /*0x1125d46*/\n  Buffer = (char *)ZXString<unsigned short>::GetBuffer(this: &v37, nMinLength: 42, bRetain: 0); /*0x1125d4c*/\n  memcpy(dst: Buffer, src: L\"UI/UIWindow4.img/battleStats/mini/backgrnd\", count: 0x54u); /*0x1125d52*/\n  ZXString<unsigned short>::ReleaseBuffer(this: &v37, nLength: 42); /*0x1125d5e*/\n  CUIWnd::OnCreate(this: &this->baseclass_0, pData, sUOL: v37, bMultiBg: p_pvarg); /*0x1125d69*/\n  get_font_name_type(result: &sFontName, fnType: 6); /*0x1125d74*/\n  p_pvarg = 2424; /*0x1125d7f*/\n  v37._m_pStr = (wchar_t *)&result; /*0x1125d84*/\n  v45 = 0; /*0x1125d85*/\n  Instance = StringPool::GetInstance(); /*0x1125d8c*/\n  m_pStr = StringPool::GetStringW(this: Instance, result: (ZXString<unsigned short> *)v37._m_pStr, nIdx: p_pvarg)->_m_pStr; /*0x1125d98*/\n  LOBYTE(v45) = 1; /*0x1125da4*/\n  PcCreateObject<_com_ptr_t<_com_IIID<IWzFont,&__s_GUID const _GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac>>>( /*0x1125da8*/\n    sUOL: m_pStr,\n    pObj: &this->m_pFont,\n    pUnkOuter: 0);\n  LOBYTE(v45) = 0; /*0x1125db3*/\n  if ( result._m_pStr != 0 ) /*0x1125db9*/\n  {\n    v7 = result._m_pStr - 6; /*0x1125dbb*/\n    if ( InterlockedDecrement(lpAddend: (volatile LONG *)result._m_pStr - 3) <= 0 ) /*0x1125dc7*/\n      ZAllocEx<ZAllocStrSelector<unsigned short>>::Free( /*0x1125dcf*/\n        this: &ZAllocEx<ZAllocStrSelector<unsigned short>>::_s_alloc,\n        p: v7);\n  }\n  VariantInit(&pvarg); /*0x1125dd8*/\n  v8 = ZComAPI::ZComVariantCopy(pvargDest: &pvarg, pvargSrc: &vtMissing); /*0x1125de7*/\n  if ( v8 < 0 ) /*0x1125df1*/\n    _com_issue_error(hr: v8); /*0x1125df4*/\n  p_pvarg = 2426; /*0x1125dfc*/\n  v37._m_pStr = (wchar_t *)&result; /*0x1125e01*/\n  LOBYTE(v45) = 2; /*0x1125e02*/\n  v9 = StringPool::GetInstance(); /*0x1125e06*/\n  m_Data = StringPool::GetBSTR(this: v9, result: (Ztl_bstr_t *)v37._m_pStr, nIdx: p_pvarg)->baseclass_0.m_Data; /*0x1125e12*/\n  LOBYTE(v45) = 3; /*0x1125e14*/\n  if ( m_Data != 0 ) /*0x1125e1a*/\n    m_wstr = m_Data->m_wstr; /*0x1125e1c*/\n  else\n    m_wstr = 0; /*0x1125e20*/\n  sStyle.baseclass_0.baseclass_0._s0.vt = 8; /*0x1125e28*/\n  sStyle.baseclass_0.baseclass_0.decVal._s0.Lo32 = (unsigned int)ZComAPI::ZComSysAllocString(s: m_wstr); /*0x1125e34*/\n  if ( sStyle.baseclass_0.baseclass_0.decVal._s0.Lo32 == 0 && m_wstr != 0 ) /*0x1125e3d*/\n    _com_issue_error(hr: -2147024882); /*0x1125e44*/\n  LOBYTE(v45) = 4; /*0x1125e57*/\n  v12 = alloca( /*0x1125e63*/\n          2\n        * MultiByteToWideChar(\n            CodePage: 0,\n            dwFlags: 0,\n            lpMultiByteStr: sFontName._m_pStr,\n            cbMultiByte: -1,\n            lpWideCharStr: 0,\n            cchWideChar: 0));\n  p_pvarg = (int)&pvarg; /*0x1125e70*/\n  v37._m_pStr = (wchar_t *)&sStyle; /*0x1125e74*/\n  v36 = -1769728; /*0x1125e75*/\n  v35 = 12; /*0x1125e7a*/\n  MultiByteToWideChar( /*0x1125e89*/\n    CodePage: 0,\n    dwFlags: 0,\n    lpMultiByteStr: sFontName._m_pStr,\n    cbMultiByte: -1,\n    lpWideCharStr: v39,\n    cchWideChar: 0x100000);\n  v34.m_Data = v13; /*0x1125e8f*/\n  thisa.p = (CCtrlOriginButton *)&v34; /*0x1125e90*/\n  _bstr_t::_bstr_t(this: &v34, s: v39); /*0x1125e96*/\n  m_pInterface = this->m_pFont.m_pInterface; /*0x1125e9b*/\n  LOBYTE(v45) = 5; /*0x1125ea1*/\n  if ( m_pInterface == 0 ) /*0x1125ea7*/\n    _com_issue_error(hr: -2147467261); /*0x1125eae*/\n  LOBYTE(v45) = 4; /*0x1125eb3*/\n  IWzFont::Create( /*0x1125eb7*/\n    this: m_pInterface,\n    sName: (Ztl_bstr_t)v34.m_Data,\n    uHeight: v35,\n    uColor: v36,\n    sStyle: (Ztl_variant_t *)v37._m_pStr,\n    vSpaceBetweenLetters: (Ztl_variant_t *)p_pvarg);\n  LOBYTE(v45) = 3; /*0x1125ec1*/\n  if ( sStyle.baseclass_0.baseclass_0._s0.vt == 8 ) /*0x1125ec9*/\n  {\n    sStyle.baseclass_0.baseclass_0._s0.vt = 0; /*0x1125ed0*/\n    if ( sStyle.baseclass_0.baseclass_0.decVal._s0.Lo32 != 0 ) /*0x1125ed6*/\n      dword_27BD538(a1: sStyle.baseclass_0.baseclass_0.decVal._s0.Lo32 - 4); /*0x1125edc*/\n  }\n  else\n  {\n    VariantClear(pvarg: &sStyle.baseclass_0.baseclass_0); /*0x1125ee8*/\n  }\n  if ( result._m_pStr != 0 ) /*0x1125ef3*/\n  {\n    _bstr_t::Data_t::Release(this: (_bstr_t::Data_t *)result._m_pStr); /*0x1125ef5*/\n    result._m_pStr = 0; /*0x1125efa*/\n  }\n  LOBYTE(v45) = 0; /*0x1125f01*/\n  if ( pvarg._s0.vt == 8 ) /*0x1125f09*/\n  {\n    pvarg._s0.vt = 0; /*0x1125f10*/\n    if ( pvarg.decVal._s0.Lo32 != 0 ) /*0x1125f16*/\n      dword_27BD538(a1: pvarg.decVal._s0.Lo32 - 4); /*0x1125f1c*/\n  }\n  else\n  {\n    VariantClear(&pvarg); /*0x1125f28*/\n  }\n  if ( TSingleton<CBattleRecordMan>::ms_pInstance != 0 ) /*0x1125f35*/\n  {\n    if ( TSingleton<CBattleRecordMan>::ms_pInstance->m_bOnCalc != 0 /*0x1125f49*/\n      && TSingleton<CBattleRecordMan>::ms_pInstance->m_bServerOnCalc != 0 )\n    {\n      this->m_tStartTime = TSingleton<CBattleRecordMan>::ms_pInstance->m_DamageInfo.m_tStartTime; /*0x1125f55*/\n      v15 = dword_27BD5EC() - this->m_tStartTime; /*0x1125f67*/\n      this->m_nDurationSec = v15 / 1000; /*0x1125f7a*/\n      if ( v15 / 1000 < 0 ) /*0x1125f80*/\n        this->m_nDurationSec = 0; /*0x1125f82*/\n      p_pvarg = 1003; /*0x1125f8c*/\n      v37._m_pStr = (wchar_t *)&thisa; /*0x1125f94*/\n      this->m_bOnCalc = 1; /*0x1125f97*/\n      p_baseclass_4 = &CLayoutMan::ABGetButtonByID( /*0x1125fac*/\n                         this: (CLayoutMan *)v3,\n                         result: (ZRef<CCtrlOriginButton> *)v37._m_pStr,\n                         nID: p_pvarg)->p->baseclass_0.baseclass_0.baseclass_4;\n      SetEnable = p_baseclass_4->vfptr->SetEnable; /*0x1125faf*/\n      LOBYTE(v45) = 6; /*0x1125fb4*/\n      SetEnable(this: p_baseclass_4, a2: 0); /*0x1125fb8*/\n      LOBYTE(v45) = 0; /*0x1125fbe*/\n      if ( thisa.p != 0 ) /*0x1125fc2*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x1125fc9*/\n      p = CLayoutMan::ABGetButtonByID(this: (CLayoutMan *)v3, result: &thisa, nID: 0x3EBu)->p; /*0x1125fde*/\n      Update = p->baseclass_0.baseclass_0.baseclass_0.vfptr[15].Update; /*0x1125fe3*/\n      LOBYTE(v45) = 7; /*0x1125fea*/\n      ((void (__thiscall *)(CCtrlOriginButton *, _DWORD, _DWORD))Update)(a1: p, a2: 0, a3: 0); /*0x1125fee*/\n      LOBYTE(v45) = 0; /*0x1125ff4*/\n      if ( thisa.p != 0 ) /*0x1125ff8*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x1125fff*/\n      v20 = &CLayoutMan::ABGetButtonByID(this: (CLayoutMan *)v3, result: &thisa, nID: 0x3ECu)->p->baseclass_0.baseclass_0.baseclass_4; /*0x112601a*/\n      v21 = v20->vfptr->SetEnable; /*0x112601d*/\n      LOBYTE(v45) = 8; /*0x1126022*/\n      v21(this: v20, a2: 1); /*0x1126026*/\n      LOBYTE(v45) = 0; /*0x112602c*/\n      if ( thisa.p != 0 ) /*0x1126030*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x1126037*/\n      v22 = CLayoutMan::ABGetButtonByID(this: (CLayoutMan *)v3, result: &thisa, nID: 0x3ECu)->p; /*0x112604c*/\n      v23 = v22->baseclass_0.baseclass_0.baseclass_0.vfptr[15].Update; /*0x1126051*/\n      LOBYTE(v45) = 9; /*0x1126058*/\n      ((void (__thiscall *)(CCtrlOriginButton *, int, _DWORD))v23)(a1: v22, a2: 1, a3: 0); /*0x112605c*/\n      LOBYTE(v45) = 0; /*0x1126062*/\n      if ( thisa.p != 0 ) /*0x1126066*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x1126071*/\n    }\n    else\n    {\n      v24 = TSingleton<CBattleRecordMan>::ms_pInstance->m_DamageInfo.m_tEndTime /*0x1126089*/\n          - TSingleton<CBattleRecordMan>::ms_pInstance->m_DamageInfo.m_tStartTime;\n      this->m_nDurationSec = v24 / 1000; /*0x112609c*/\n      if ( v24 / 1000 < 0 ) /*0x11260a2*/\n        this->m_nDurationSec = 0; /*0x11260a4*/\n      p_pvarg = 1003; /*0x11260ae*/\n      v37._m_pStr = (wchar_t *)&thisa; /*0x11260b6*/\n      this->m_bOnCalc = 0; /*0x11260b9*/\n      v25 = &CLayoutMan::ABGetButtonByID( /*0x11260ce*/\n               this: (CLayoutMan *)v3,\n               result: (ZRef<CCtrlOriginButton> *)v37._m_pStr,\n               nID: p_pvarg)->p->baseclass_0.baseclass_0.baseclass_4;\n      v26 = v25->vfptr->SetEnable; /*0x11260d1*/\n      LOBYTE(v45) = 10; /*0x11260d6*/\n      v26(this: v25, a2: 1); /*0x11260da*/\n      LOBYTE(v45) = 0; /*0x11260e0*/\n      if ( thisa.p != 0 ) /*0x11260e4*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x11260eb*/\n      v27 = CLayoutMan::ABGetButtonByID(this: (CLayoutMan *)v3, result: &thisa, nID: 0x3EBu)->p; /*0x1126100*/\n      v28 = v27->baseclass_0.baseclass_0.baseclass_0.vfptr[15].Update; /*0x1126105*/\n      LOBYTE(v45) = 11; /*0x112610c*/\n      ((void (__thiscall *)(CCtrlOriginButton *, int, _DWORD))v28)(a1: v27, a2: 1, a3: 0); /*0x1126110*/\n      LOBYTE(v45) = 0; /*0x1126116*/\n      if ( thisa.p != 0 ) /*0x112611a*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x1126121*/\n      v29 = &CLayoutMan::ABGetButtonByID(this: (CLayoutMan *)v3, result: &thisa, nID: 0x3ECu)->p->baseclass_0.baseclass_0.baseclass_4; /*0x112613c*/\n      v30 = v29->vfptr->SetEnable; /*0x112613f*/\n      LOBYTE(v45) = 12; /*0x1126144*/\n      v30(this: v29, a2: 0); /*0x1126148*/\n      LOBYTE(v45) = 0; /*0x112614e*/\n      if ( thisa.p != 0 ) /*0x1126152*/\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x1126159*/\n      v31 = CLayoutMan::ABGetButtonByID(this: (CLayoutMan *)v3, result: &thisa, nID: 0x3ECu)->p; /*0x112616e*/\n      v32 = v31->baseclass_0.baseclass_0.baseclass_0.vfptr[15].Update; /*0x1126173*/\n      LOBYTE(v45) = 13; /*0x112617a*/\n      ((void (__thiscall *)(CCtrlOriginButton *, _DWORD, _DWORD))v32)(a1: v31, a2: 0, a3: 0); /*0x112617e*/\n      LOBYTE(v45) = 0; /*0x1126184*/\n      if ( thisa.p != 0 ) /*0x1126188*/\n      {\n        ZRef<CCtrlOriginButton>::_ReleaseRaw(this: &thisa, __formal: 0); /*0x112618f*/\n        thisa.p = 0; /*0x1126194*/\n      }\n    }\n  }\n  v45 = -1; /*0x112619e*/\n  if ( sFontName._m_pStr != 0 ) /*0x11261a7*/\n  {\n    v33 = sFontName._m_pStr - 12; /*0x11261a9*/\n    if ( InterlockedDecrement(lpAddend: (volatile LONG *)sFontName._m_pStr - 3) <= 0 ) /*0x11261b5*/\n      ZAllocEx<ZAllocStrSelector<char>>::Free(this: &ZAllocEx<ZAllocStrSelector<char>>::_s_alloc, p: v33); /*0x11261bd*/\n  }\n}",
+  "refs": [
+    {
+      "addr": "0xb307e0",
+      "name": "?Init@CLayoutMan@@QAEXPAVCWnd@@JJ@Z"
+    },
+    {
+      "addr": "0xb36170",
+      "name": "?AutoBuild@CLayoutMan@@QAEXPBGJJJ_N1@Z"
+    },
+    {
+      "addr": "0x24d1060",
+      "name": "aUiUiwindow4Img_11",
+      "string": "䥕唯坉湩潤㑷椮杭戯瑡汴卥慴獴洯湩�"
+    },
+    {
+      "addr": "0x1acf570",
+      "name": "?PushStackForTab@CWvsContext@@QAEXPAVCWnd@@@Z"
+    },
+    {
+      "addr": "0x27a5184",
+      "name": "?ms_pInstance@?$TSingleton@VCWvsContext@@@@1PAVCWvsContext@@A"
+    },
+    {
+      "addr": "0x4d0830",
+      "name": "?GetBuffer@?$ZXString@G@@QAEPAGHH@Z"
+    },
+    {
+      "addr": "0x1bf17c0",
+      "name": "_memcpy"
+    },
+    {
+      "addr": "0x24d1008",
+      "name": "asc_24D1008",
+      "string": "䥕唯坉湩潤㑷椮杭戯瑡汴卥慴獴洯湩⽩慢正牧摮"
+    },
+    {
+      "addr": "0x4bd8b0",
+      "name": "?ReleaseBuffer@?$ZXString@G@@QAEXH@Z"
+    },
+    {
+      "addr": "0x17fe630",
+      "name": "?OnCreate@CUIWnd@@UAEXPAXV?$ZXString@G@@H@Z"
+    },
+    {
+      "addr": "0x71f380",
+      "name": "?get_font_name_type@@YA?AV?$ZXString@D@@J@Z"
+    },
+    {
+      "addr": "0x101b3f0",
+      "name": "?GetInstance@StringPool@@SAAAV1@XZ"
+    },
+    {
+      "addr": "0x4b6c80",
+      "name": "?GetStringW@StringPool@@QAE?AV?$ZXString@G@@I@Z"
+    },
+    {
+      "addr": "0x547f80",
+      "name": "??$PcCreateObject@V?$_com_ptr_t@V?$_com_IIID@UIWzFont@@$1?_GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac@@3U__s_GUID@@B@@@@@@YAXPBGAAV?$_com_ptr_t@V?$_com_IIID@UIWzFont@@$1?_GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac@@3U__s_GUID@@B@@@@PAUIUnknown@@@Z"
+    },
+    {
+      "addr": "0x4b4820",
+      "name": "?Free@?$ZAllocEx@V?$ZAllocStrSelector@G@@@@QAEXPAX@Z"
+    },
+    {
+      "addr": "0x27c5290",
+      "name": "?_s_alloc@?$ZAllocEx@V?$ZAllocStrSelector@G@@@@0V1@A"
+    },
+    {
+      "addr": "0x2343188",
+      "name": "__imp__InterlockedDecrement@4"
+    },
+    {
+      "addr": "0x2343340",
+      "name": "__imp__VariantInit@4"
+    },
+    {
+      "addr": "0x4ae580",
+      "name": "?ZComVariantCopy@ZComAPI@@YAJPAUtagVARIANT@@0@Z"
+    },
+    {
+      "addr": "0x279d6c8",
+      "name": "?vtMissing@@3V_variant_t@@A"
+    },
+    {
+      "addr": "0x1bf05e0",
+      "name": "?_com_issue_error@@YGXJ@Z"
+    },
+    {
+      "addr": "0x4b7d40",
+      "name": "?GetBSTR@StringPool@@QAE?AVZtl_bstr_t@@I@Z"
+    },
+    {
+      "addr": "0x4ae010",
+      "name": "?ZComSysAllocString@ZComAPI@@YAPAGPBG@Z"
+    },
+    {
+      "addr": "0x234318c",
+      "name": "__imp__MultiByteToWideChar@24"
+    },
+    {
+      "addr": "0x4b01c0",
+      "name": "??0_bstr_t@@QAE@PBG@Z"
+    },
+    {
+      "addr": "0x562ab0",
+      "name": "?Create@IWzFont@@QAEJVZtl_bstr_t@@KKABVZtl_variant_t@@1@Z"
+    },
+    {
+      "addr": "0x27bd538",
+      "name": "dword_27BD538"
+    },
+    {
+      "addr": "0x234333c",
+      "name": "__imp__VariantClear@4"
+    },
+    {
+      "addr": "0x4b0940",
+      "name": "?Release@Data_t@_bstr_t@@QAEKXZ"
+    },
+    {
+      "addr": "0x27a9cdc",
+      "name": "?ms_pInstance@?$TSingleton@VCBattleRecordMan@@@@1PAVCBattleRecordMan@@A"
+    },
+    {
+      "addr": "0x27bd5ec",
+      "name": "dword_27BD5EC"
+    },
+    {
+      "addr": "0xb32dc0",
+      "name": "?ABGetButtonByID@CLayoutMan@@QAE?AV?$ZRef@VCCtrlOriginButton@@@@I@Z"
+    },
+    {
+      "addr": "0x502da0",
+      "name": "?_ReleaseRaw@?$ZRef@VCCtrlOriginButton@@@@AAEXPAVZRefCounted@@@Z"
+    },
+    {
+      "addr": "0x4af8a0",
+      "name": "?Free@?$ZAllocEx@V?$ZAllocStrSelector@D@@@@QAEXPAX@Z"
+    },
+    {
+      "addr": "0x27c5350",
+      "name": "?_s_alloc@?$ZAllocEx@V?$ZAllocStrSelector@D@@@@0V1@A"
+    }
+  ]
+}

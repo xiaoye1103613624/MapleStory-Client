@@ -680,6 +680,20 @@ namespace ms
 		void handle(InPacket& recv) const override;
 	};
 
+	// 战斗统计（192 Battle Analysis / B2）：S→C 0x3BC 恒 1B 许可（对齐原生）。
+	class BattleStatsHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 战斗统计队伍数据：S→C 0x3BD（subtype 0=重置 / 1=队员快照）。
+	class BattleStatsPartyHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
 	// Kaentake 动态聊天表情广播（S->C 0x3716）：charId + emoticonId → 头顶动画。
 	class ChatEmoticonHandler : public PacketHandler
 	{

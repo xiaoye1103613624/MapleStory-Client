@@ -41,6 +41,7 @@
 #include "UIMaker.h"
 #include "UIMonsterBook.h"
 #include "UIMonsterCarnival.h"
+#include "UIBattleStats.h"
 #include "UIOptionMenu.h"
 #include "UIMiscShells.h"
 #include "UIPlant.h"
@@ -1214,11 +1215,13 @@ namespace ms
 			}
 			case Buttons::BT_MENU_BATTLE:
 			{
-				auto mc = UI::get().get_element<UIMonsterCarnival>();
-				if (!mc)
-					mc = UI::get().emplace<UIMonsterCarnival>();
-				else if (!mc->is_active())
-					mc->makeactive();
+				// 战斗统计（192 Battle Analysis）：此前误接怪物嘉年华，修正为真正的战斗统计窗。
+				// 窗口单例由 UI::emplace 管理（已开则 makeactive），侧栏入口走 FeatureRegistry 同一路径。
+				auto bs = UI::get().get_element<UIBattleStats>();
+				if (!bs)
+					bs = UI::get().emplace<UIBattleStats>();
+				else if (!bs->is_active())
+					bs->makeactive();
 				remove_menus();
 				break;
 			}

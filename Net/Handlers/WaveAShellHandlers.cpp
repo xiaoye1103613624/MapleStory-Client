@@ -12,7 +12,9 @@
 #include "../../Util/PerfLog.h"
 #include "../../IO/UI.h"
 #include "../../Character/DamageRank.h"
+#include "../../Character/BattleStats.h"
 #include "../../IO/UITypes/UIDamageRank.h"
+#include "../../IO/UITypes/UIBattleStats.h"
 #include "../../IO/UITypes/UIChatEmoticon.h"
 #include "../../IO/UITypes/UIDailyCheckin.h"
 #include "../../IO/UITypes/UIDailyGift.h"
@@ -3365,6 +3367,65 @@ namespace ms
 		if (changed)
 		{
 			if (auto ui = UI::get().get_element<UIDamageRank>())
+				ui->reload();
+		}
+	}
+
+	void BattleStatsHandler::handle(InPacket& recv) const
+	{
+		// 协议：s9 SendOpcode.BATTLE_STATS_RESULT = 0x3BC，恒 1B 许可，
+		// 对齐 192 OnServerOnCalcRequestResult@0x628900（只读 m_bServerOnCalc）。
+		const int8_t permit = recv.available() ? recv.read_byte() : 0;
+		BattleStats::get().set_server_enabled(permit != 0);
+		while (recv.available())
+			recv.skip_byte(); // 防御性 drain：原生只有 1B，多余字节一律丢弃防错位
+		LOG(LOG_DEBUG, "BattleStats permit=" << (int)permit);
+	}
+
+	void BattleStatsPartyHandler::handle(InPacket& recv) const
+	{
+		// 协议：s9 SendOpcode.BATTLE_STATS_PARTY = 0x3BD。
+		// byte subtype: 0=重置（清队员行）；1=队员快照
+		// subtype=1：int32 charId → int32 jobId → string name → int32 partyId →
+		//            int64 exp → int64 meso → int64 kill → int64 damage → uint16 durationSec
+		const int8_t subtype = recv.available() ? recv.read_byte() : 0;
+		bool changed = false;
+		if (subtype == 0)
+		{
+			BattleStats::get().reset();
+			changed = true;
+			LOG(LOG_DEBUG, "BattleStats party reset");
+		}
+		else if (subtype == 1)
+		{
+			BattleStats::Entry e;
+			e.charid = recv.available() >= 4 ? recv.read_int() : 0;
+			e.jobid = recv.available() >= 4 ? recv.read_int() : 0;
+			e.name = recv.available() ? recv.read_string() : "";
+			e.partyid = recv.available() >= 4 ? recv.read_int() : 0;
+			e.exp = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			e.meso = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			e.kills = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			e.damage = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			const int16_t sec = recv.available() >= 2 ? recv.read_short() : 0;
+			e.duration_ms = static_cast<int64_t>(sec < 0 ? 0 : sec) * 1000;
+			BattleStats::get().upsert(e);
+			changed = true;
+			LOG(LOG_DEBUG, "BattleStats party name=" << e.name << " job=" << e.jobid
+				<< " party=" << e.partyid << " exp=" << e.exp << " meso=" << e.meso
+				<< " kills=" << e.kills << " dmg=" << e.damage << " sec=" << sec);
+		}
+		else
+		{
+			LOG(LOG_DEBUG, "BattleStats party subtype=" << (int)subtype);
+		}
+		while (recv.available())
+			recv.skip_byte();
+
+		// 窗口已打开时刷新（入口统一走侧栏/状态栏，不凭收包弹窗）。
+		if (changed)
+		{
+			if (auto ui = UI::get().get_element<UIBattleStats>())
 				ui->reload();
 		}
 	}

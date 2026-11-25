@@ -1,0 +1,87 @@
+== resource probe ==
+timestamp          : 2026-11-25 12:12:28
+build              : Nov 25 2026 12:11:11
+report             : E:\MXD\BeiDou-Client-xy\_resource_probe.log
+working directory  : E:\MXD\BeiDou-Client-xy
+DataFormat         : img
+DataDir            : Data
+wz roots found     : 0/28
+nx roots found     : 0/29
+img directory      : E:\MXD\BeiDou-Client-xy\Data (present)
+img subdirectories : 16
+-- locator --
+candidates         : 4
+locator picks      : img (score=15, base=E:\MXD\BeiDou-Client-xy\Data)
+-- load --
+elapsed            : 4665 ms
+result             : NONE
+ui root children   : 33 (root bound)
+-- key --
+keymode            : auto
+keyfile            : (disabled)
+resolver trials per archive (after warming):
+
+-- window nodes --
+UIWindow[Skill] : UIWindow2=no UIWindow=yes backgrnd=yes children=11
+UIWindow[Item] : UIWindow2=yes UIWindow=yes backgrnd=yes children=15
+UIWindow[Equip] : UIWindow2=no UIWindow=yes backgrnd=yes children=10
+UIWindow[Stat] : UIWindow2=no UIWindow=yes backgrnd=yes children=12
+UIWindow[KeyConfig] : UIWindow2=no UIWindow=yes backgrnd=yes children=12
+UIWindow[Channel] : UIWindow2=no UIWindow=yes backgrnd=no children=10
+UIWindow[MiniMap] : UIWindow2=no UIWindow=yes backgrnd=no children=8
+-- skill window detail --
+Skill           : exists=yes children=11
+Skill/main      : exists=no children=0
+Skill/main/backgrnd   : exists=no
+Skill/backgrnd        : exists=yes
+Skill/main/backgrnd2  : exists=no
+Skill/main/backgrnd3  : exists=no
+Skill/backgrnd2       : exists=no
+Skill/backgrnd3       : exists=no
+resolved main usable : yes
+ui_backgrnd (as coded) chosen from : Skill/backgrnd
+ui_backgrnd (as coded) : valid=1 dim=(175,289) exists=1
+Skill/backgrnd (fallback) : valid=1 dim=(175,289) exists=1
+Skill/main/backgrnd : (node missing)
+-- runtime UI img dump (per img) --
+UI namespace imgs : 33
+  [Basic.img] children=75 -> Basic.img_runtime.json
+  [BuffIcon.img] children=2 -> BuffIcon.img_runtime.json
+  [CashShop.img] children=23 -> CashShop.img_runtime.json
+  [CashShopPreview.img] children=15 -> CashShopPreview.img_runtime.json
+  [ChatBalloon.img] children=95 -> ChatBalloon.img_runtime.json
+  [ColorPrism.img] children=6 -> ColorPrism.img_runtime.json
+  [DailyGiftStage.img] children=1 -> DailyGiftStage.img_runtime.json
+  [DeathCount.img] children=2 -> DeathCount.img_runtime.json
+  [DialogImage.img] children=1 -> DialogImage.img_runtime.json
+  [GuildBBS.img] children=1 -> GuildBBS.img_runtime.json
+  [GuildMark.img] children=2 -> GuildMark.img_runtime.json
+  [ITC.img] children=14 -> ITC.img_runtime.json
+  [ITCPreview.img] children=15 -> ITCPreview.img_runtime.json
+  [Login.img] children=19 -> Login.img_runtime.json
+  [Logo.img] children=2 -> Logo.img_runtime.json
+  [MainNotice.img] children=15 -> MainNotice.img_runtime.json
+  [MapLogin.img] children=16 -> MapLogin.img_runtime.json
+  [MapleEzorsiaV2wzfiles.img] children=3 -> MapleEzorsiaV2wzfiles.img_runtime.json
+  [MapleTV.img] children=7 -> MapleTV.img_runtime.json
+  [NameTag.img] children=374 -> NameTag.img_runtime.json
+  [New.img] children=2 -> New.img_runtime.json
+  [Npt_GuideLine.img] children=2 -> Npt_GuideLine.img_runtime.json
+  [StatusBar.img] children=18 -> StatusBar.img_runtime.json
+  [StatusBar3.img] children=10 -> StatusBar3.img_runtime.json
+  [UIToolTip.img] children=3 -> UIToolTip.img_runtime.json
+  [UIWindow.img] children=117 -> UIWindow.img_runtime.json
+  [UIWindow.img.AddonEquip_blank_robot.img] children=117 -> UIWindow.img.AddonEquip_blank_robot.img_runtime.json
+  [UIWindow2.img] children=4 -> UIWindow2.img_runtime.json
+  [UIWindow2Enh.img] children=43 -> UIWindow2Enh.img_runtime.json
+  [UIWindow4.img] children=1 -> UIWindow4.img_runtime.json
+  [UIWindow4_battlestats.img] children=1 -> UIWindow4_battlestats.img_runtime.json
+  [UIWindowCN.img] children=2 -> UIWindowCN.img_runtime.json
+  [tutorial.img] children=32 -> tutorial.img_runtime.json
+-- runtime four-window backgrnd --
+  [Item] backgrnd=175x289
+  [Equip] backgrnd=175x304
+  [Skill] backgrnd=175x289
+  [Stat] backgrnd=300x392
+-- runtime other-namespace catalog --
+  [cat] Character files=63673 -> catalog_Character.json

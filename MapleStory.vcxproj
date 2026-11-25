@@ -180,11 +180,11 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;USE_NX;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;USE_NX;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ForcedIncludeFiles>string;cmath;stdexcept</ForcedIncludeFiles>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /FS %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)includes\glew-2.1.0\include\GL;$(ProjectDir)includes\freetype\include;$(ProjectDir)includes\SDL3\include;$(ProjectDir)includes\stb;$(ProjectDir)includes\bass24\c;$(ProjectDir)includes\NoLifeNx;$(ProjectDir)tools\vendor\NoLifeWzToNx-master\includes\zlib\include;$(ProjectDir)tools\vendor\NoLifeWzToNx-master\includes\libsquish;$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -408,6 +408,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIMerchant.cpp" />
     <ClCompile Include="IO\UITypes\UIMonsterBook.cpp" />
     <ClCompile Include="IO\UITypes\UIDamageRank.cpp" />
+    <ClCompile Include="IO\UITypes\UIBattleStats.cpp" />
     <ClCompile Include="IO\UITypes\UIChatEmoticon.cpp" />
     <ClCompile Include="IO\UITypes\UIContentsShortcut.cpp" />
     <ClCompile Include="IO\UITypes\UISpecial.cpp" />
@@ -796,6 +797,9 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UITreasureBox.h" />
     <ClInclude Include="IO\UITypes\UIAdmin.h" />
     <ClInclude Include="IO\UITypes\UIDamageRank.h" />
+    <ClInclude Include="IO\UITypes\UIBattleStats.h" />
+    <ClInclude Include="Character\BattleStats.h" />
+    <ClInclude Include="Net\Packets\BattleStatsPackets.h" />
     <ClInclude Include="IO\UITypes\UIChatEmoticon.h" />
     <ClInclude Include="IO\UITypes\UIContentsShortcut.h" />
     <ClInclude Include="Net\Packets\ChatEmoticonPackets.h" />

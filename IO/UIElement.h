@@ -291,6 +291,9 @@ namespace ms
 			/// Notice/0=回城单钮、Notice/1=回城/原地复活术双钮；FOCUSED 吞输入。
 			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
 			DEATHNOTICE,
+			/// 战斗统计窗（UIBattleStats，192 Battle Analysis；侧栏/状态栏入口，0x3BC/0x3BD）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			BATTLESTATS,
 			NUM_TYPES
 		};
 

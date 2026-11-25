@@ -981,6 +981,12 @@ namespace ms
 		PosDAMAGERANK() : PointEntry("ui.position.damagerank", "(200, 100)") {}
 	};
 
+	// 战斗统计（UIBattleStats，192 Battle Analysis）窗默认位置。
+	struct PosBATTLESTATS : public Configuration::PointEntry
+	{
+		PosBATTLESTATS() : PointEntry("ui.position.battlestats", "(200, 100)") {}
+	};
+
 	// 动态聊天表情选择窗（UIChatEmoticon）默认位置。
 	struct PosCHATEMOTICON : public Configuration::PointEntry
 	{

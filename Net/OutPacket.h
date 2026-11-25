@@ -352,7 +352,10 @@ namespace ms
 			DAMAGE_SKIN_APPLY = 14150,     // 0x3746 应用已拥有皮肤
 			DAMAGE_SKIN_PURCHASE = 14151,  // 0x3747 游戏币购买皮肤
 			/// 美容院 C→S 0x174（十进制 372）：byte action + 载荷
-			BEAUTY_ACTION = 372
+			BEAUTY_ACTION = 372,
+			/// 战斗统计请求（C→S 0x3BC，对齐 192 RequestOnCalc@0x62ee00）：
+			/// 3×byte(bOn, bIsNew, bClear)；服务端回 0x3BC 1B 许可 + 0x3BD 数据。
+			BATTLE_STATS_REQUEST = 956
 		};
 
 	protected:

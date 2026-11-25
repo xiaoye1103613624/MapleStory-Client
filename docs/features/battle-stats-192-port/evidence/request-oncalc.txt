@@ -1,0 +1,58 @@
+{
+  "addr": "0x62ee00",
+  "code": "void __thiscall CBattleRecordMan::RequestOnCalc(CBattleRecordMan *this, int bOn, int bIsNew, int bClear)\n{\n  int v5; // eax\n  int CurFieldID; // eax\n  COutPacket oPacket; // [esp+14h] [ebp-20h] BYREF\n  int v8; // [esp+2Ch] [ebp-8h]\n  int v9; // [esp+30h] [ebp-4h]\n\n  if ( bClear != 0 ) /*0x62ee2f*/\n  {\n    CBattleRecordMan::DamageInfo::ClearAllValue(this: &this->m_DamageInfo); /*0x62ee34*/\n    CBattleRecordMan::RecoveryItemInfo::ClearAllValue(this: &this->m_RecoveryItemInfo); /*0x62ee3f*/\n    ZArray<CBattleRecordMan::AggroMonitoring>::RemoveAll(this: &this->m_aAggroMonitoring); /*0x62ee4a*/\n  }\n  if ( this->m_bOnCalc != 0 )\n  {\n    if ( bOn == 0 && bClear == 0 ) /*0x62eea2*/\n    {\n      this->m_DamageInfo.m_tEndTime = dword_27BD5EC(); /*0x62eeaa*/\n      if ( TSingleton<CWvsContext>::ms_pInstance.baseclass_0.m_Data != 0 ) /*0x62eeb8*/\n        CurFieldID = CWvsContext::GetCurFieldID(this: (CWvsContext *)TSingleton<CWvsContext>::ms_pInstance.baseclass_0.m_Data); /*0x62eeba*/\n      else\n        CurFieldID = 0; /*0x62eec1*/\n      this->m_DamageInfo.m_nEndFieldID = CurFieldID; /*0x62eec3*/\n    }\n  }\n  else if ( bOn != 0 )\n  {\n    this->m_DamageInfo.m_tStartTime = dword_27BD5EC(); /*0x62ee68*/\n    v5 = TSingleton<CWvsContext>::ms_pInstance.baseclass_0.m_Data != 0\n       ? CWvsContext::GetCurFieldID(this: (CWvsContext *)TSingleton<CWvsContext>::ms_pInstance.baseclass_0.m_Data)\n       : 0;\n    this->m_DamageInfo.m_nStartFieldID = v5; /*0x62ee81*/\n    if ( bIsNew != 0 ) /*0x62ee89*/\n    {\n      this->m_bDot = 1; /*0x62ee90*/\n      this->m_bSummon = 1; /*0x62ee93*/\n    }\n  }\n  this->m_bOnCalc = bOn; /*0x62eed2*/\n  this->m_bIsNew = bIsNew; /*0x62eed5*/\n  COutPacket::COutPacket(this: &oPacket, nType: 956); /*0x62eed8*/\n  v9 = 0; /*0x62eee2*/\n  COutPacket::Encode1(this: &oPacket, n: bOn); /*0x62eeea*/\n  COutPacket::Encode1(this: &oPacket, n: bIsNew); /*0x62eef4*/\n  COutPacket::Encode1(this: &oPacket, n: bClear); /*0x62eefe*/\n  if ( bOn == 0 && bIsNew != 0 && bClear == 0 ) /*0x62ef0d*/\n    COutPacket::Encode2(this: &oPacket, n: (this->m_DamageInfo.m_tEndTime - this->m_DamageInfo.m_tStartTime) / 1000); /*0x62ef31*/\n  if ( TSingleton<CClientSocket>::ms_pInstance._m_pStr != 0 ) /*0x62ef3e*/\n    CClientSocket::SendPacket(this: (CClientSocket *)TSingleton<CClientSocket>::ms_pInstance._m_pStr, &oPacket); /*0x62ef45*/\n  v8 = -1; /*0x62ef4e*/\n  if ( oPacket.m_bLoopback != 0 ) /*0x62ef58*/\n    ZAllocEx<ZAllocAnonSelector>::Free( /*0x62ef63*/\n      this: &ZAllocEx<ZAllocAnonSelector>::_s_alloc,\n      p: (void *)(oPacket.m_bLoopback - 4));\n}",
+  "refs": [
+    {
+      "addr": "0x62e310",
+      "name": "?ClearAllValue@DamageInfo@CBattleRecordMan@@QAEXXZ"
+    },
+    {
+      "addr": "0x6269e0",
+      "name": "?ClearAllValue@RecoveryItemInfo@CBattleRecordMan@@QAEXXZ"
+    },
+    {
+      "addr": "0x62a0c0",
+      "name": "?RemoveAll@?$ZArray@UAggroMonitoring@CBattleRecordMan@@@@QAEXXZ"
+    },
+    {
+      "addr": "0x27bd5ec",
+      "name": "dword_27BD5EC"
+    },
+    {
+      "addr": "0x1ac1a70",
+      "name": "?GetCurFieldID@CWvsContext@@QBEJXZ"
+    },
+    {
+      "addr": "0x27a5184",
+      "name": "?ms_pInstance@?$TSingleton@VCWvsContext@@@@1PAVCWvsContext@@A"
+    },
+    {
+      "addr": "0xe17c00",
+      "name": "??0COutPacket@@QAE@J@Z"
+    },
+    {
+      "addr": "0x505ab0",
+      "name": "?Encode1@COutPacket@@QAEXE@Z"
+    },
+    {
+      "addr": "0x505b00",
+      "name": "?Encode2@COutPacket@@QAEXG@Z"
+    },
+    {
+      "addr": "0x6ed500",
+      "name": "?SendPacket@CClientSocket@@QAEXABVCOutPacket@@@Z"
+    },
+    {
+      "addr": "0x27a5188",
+      "name": "?ms_pInstance@?$TSingleton@VCClientSocket@@@@1PAVCClientSocket@@A"
+    },
+    {
+      "addr": "0x4197b0",
+      "name": "?Free@?$ZAllocEx@VZAllocAnonSelector@@@@QAEXPAX@Z"
+    },
+    {
+      "addr": "0x27c5300",
+      "name": "?_s_alloc@?$ZAllocEx@VZAllocAnonSelector@@@@0V1@A"
+    }
+  ]
+}
