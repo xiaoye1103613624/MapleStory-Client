@@ -39,6 +39,7 @@ namespace ms
 		void apply_stats(const Char& user, Attack& attack) const override;
 		void apply_hiteffects(const AttackUser& user, Mob& target) const override;
 		Animation get_bullet(const Char& user, int32_t bulletid) const override;
+		uint16_t get_bullet_rotate_period(const Char& user) const override;
 
 		bool is_attack() const override;
 		bool is_skill() const override;

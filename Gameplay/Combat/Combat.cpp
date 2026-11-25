@@ -592,7 +592,8 @@ namespace ms
 			Bullet bullet{
 				move.get_bullet(user, result.bullet),
 				user.get_position(),
-				result.toleft
+				result.toleft,
+				move.get_bullet_rotate_period(user) // WZ ball/rotatePeriod 持续旋转
 			};
 
 			for (auto& line : result.damagelines)

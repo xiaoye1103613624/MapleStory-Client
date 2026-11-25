@@ -37,6 +37,11 @@ namespace ms
 		return ball.animation;
 	}
 
+	uint16_t SingleBullet::get_rotate_period(const Char&) const
+	{
+		return ball.rotate_period;
+	}
+
 	BySkillLevelBullet::BySkillLevelBullet(nl::node src, int32_t id)
 	{
 		skillid = id;
@@ -57,5 +62,14 @@ namespace ms
 			return iter->second.animation;
 		else
 			return {};
+	}
+
+	uint16_t BySkillLevelBullet::get_rotate_period(const Char& user) const
+	{
+		int32_t level = user.get_skilllevel(skillid);
+		auto iter = bullets.find(level);
+		if (iter != bullets.end())
+			return iter->second.rotate_period;
+		return 0;
 	}
 }

@@ -46,6 +46,12 @@ namespace ms
 		virtual void apply_stats(const Char& user, Attack& attack) const = 0;
 		virtual void apply_hiteffects(const AttackUser& user, Mob& target) const = 0;
 		virtual Animation get_bullet(const Char& user, int32_t bulletid) const = 0;
+		// Skill.wz ball/rotatePeriod（每转一圈毫秒数，0=不旋转）。MinMS SpecialMove.h:130。
+		virtual uint16_t get_bullet_rotate_period(const Char& user) const
+		{
+			(void)user;
+			return 0;
+		}
 
 		virtual bool is_attack() const = 0;
 		virtual bool is_skill() const = 0;

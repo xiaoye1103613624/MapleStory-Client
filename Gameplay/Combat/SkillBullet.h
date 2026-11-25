@@ -27,15 +27,24 @@ namespace ms
 		virtual ~SkillBullet() {}
 
 		virtual Animation get(const Char& user, int32_t bulletid) const = 0;
+		// Skill.wz ball/rotatePeriod（每转一圈毫秒数；0=不旋转）。
+		// 三端原生对齐 MinMS SkillBullet.h:31，live 1411.img ball/rotatePeriod=400 实证。
+		virtual uint16_t get_rotate_period(const Char& user) const
+		{
+			(void)user;
+			return 0;
+		}
 
 	protected:
 		struct Ball
 		{
 			Animation animation;
+			uint16_t rotate_period = 0;
 
 			Ball(nl::node src)
 			{
 				animation = src;
+				rotate_period = static_cast<uint16_t>(src["rotatePeriod"].get_integer(0));
 			}
 
 			Ball() {}
@@ -54,6 +63,7 @@ namespace ms
 		SingleBullet(nl::node src);
 
 		Animation get(const Char& user, int32_t bulletid) const override;
+		uint16_t get_rotate_period(const Char& user) const override;
 
 	private:
 		Ball ball;
@@ -65,6 +75,7 @@ namespace ms
 		BySkillLevelBullet(nl::node src, int32_t skillid);
 
 		Animation get(const Char& user, int32_t bulletid) const override;
+		uint16_t get_rotate_period(const Char& user) const override;
 
 	private:
 		std::unordered_map<int32_t, Ball> bullets;

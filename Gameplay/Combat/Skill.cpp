@@ -389,6 +389,12 @@ namespace ms
 		return bullet->get(user, bulletid);
 	}
 
+	uint16_t Skill::get_bullet_rotate_period(const Char& user) const
+	{
+		// 三端原生对齐（MinMS Skill.cpp:776-779）：委托给弹道资源读 rotatePeriod。
+		return bullet ? bullet->get_rotate_period(user) : 0;
+	}
+
 	bool Skill::is_attack() const
 	{
 		return SkillData::get(skillid).is_attack();

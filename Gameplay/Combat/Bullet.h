@@ -27,7 +27,9 @@ namespace ms
 	class Bullet
 	{
 	public:
-		Bullet(Animation animation, Point<int16_t> origin, bool toleft);
+		// rotate_period_ms = WZ ball/rotatePeriod（每转一圈毫秒数，0=不旋转）。
+		Bullet(Animation animation, Point<int16_t> origin, bool toleft,
+			uint16_t rotate_period_ms = 0);
 
 		void draw(double viewx, double viewy, float alpha) const;
 		bool settarget(Point<int16_t> target);
@@ -37,5 +39,9 @@ namespace ms
 		Animation animation;
 		MovingObject moveobj;
 		bool flip;
+		// 投射物持续旋转（MinMS Bullet.cpp:124-133）：每 rotate_period 转一圈。
+		uint16_t rotate_period = 0;
+		uint16_t rotate_elapsed = 0;
+		float angle = 0.0f;
 	};
 }
