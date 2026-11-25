@@ -287,6 +287,10 @@ namespace ms
 			/// 融合外观窗（UIAnvilDialog；侧栏入口，C→S USE_CASH_ITEM 0x4F 新 layout）。
 			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
 			ANVILDIALOG,
+			/// 2026-11-25：原生 v83 死亡复活弹窗（UIDeathNotice）。
+			/// Notice/0=回城单钮、Notice/1=回城/原地复活术双钮；FOCUSED 吞输入。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			DEATHNOTICE,
 			NUM_TYPES
 		};
 

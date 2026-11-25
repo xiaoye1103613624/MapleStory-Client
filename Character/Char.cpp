@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Char.h"
 #include "../Graphics/TintContext.h"
+#include "../Audio/Audio.h"
 
 #include "../Data/WeaponData.h"
 #include "../Configuration.h"
@@ -425,6 +426,16 @@ namespace ms
 
 		Stance::Id stance = Stance::by_state(state);
 		look.set_stance(stance);
+
+		// 2026-11-25：原生 v83 死亡墓碑下落动画（MinMS Char.cpp:1492-1529）。
+		// 由非死亡态切入 DIED 时播一次 Tomb.img/fall + TOMBSTONE 音效；
+		// 复活（SetField→respawn→nullstate）会再切离 DIED，下次死亡可重播。
+		if (st == State::DIED)
+		{
+			if (tomb_fall.get_frame_count() > 0)
+				effects.add(tomb_fall);
+			Sound(Sound::Name::TOMBSTONE).play();
+		}
 	}
 
 	void Char::add_pet(uint8_t index, int32_t iid, const std::string& name, int32_t uniqueid, Point<int16_t> pos, uint8_t stance, int32_t fhid)
@@ -547,6 +558,9 @@ namespace ms
 		CharLook::init();
 		dbg("char:look-ok");
 
+		// 2026-11-25：原生墓碑动画资源（Effect/Tomb.img/fall）
+		tomb_fall = Animation(nl::nx::Effect["Tomb.img"]["fall"]);
+
 		nl::node src = nl::nx::Effect["BasicEff.img"];
 		dbg(std::string("char:src=") + (static_cast<bool>(src) ? "y" : "n"));
 
@@ -562,4 +576,5 @@ namespace ms
 	}
 
 	EnumMap<CharEffect::Id, Animation> Char::chareffects;
+	Animation Char::tomb_fall;
 }

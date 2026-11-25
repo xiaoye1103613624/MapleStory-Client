@@ -36,7 +36,9 @@
 #include "../../IO/UITypes/UIMiscShells.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../IO/UITypes/UIDeathNotice.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
+#include "../../Net/Packets/GameplayPackets.h"
 #include "../../Character/SkillMacros.h"
 #include "../../Configuration.h"
 #include "../../Graphics/Color.h"
@@ -111,11 +113,29 @@ namespace ms
 				statsinfo->update_all_stats();
 		}
 
-		// 服务端权威 HP=0 → 强制切死亡态（DIED + dead stance）。此前客户端只把 HP
-		// 存进 basestats、没有任何状态转换，表现为「血0仍站立、技能照放」。
-		// 复活走既有 ChangeMapPacket(true,...) 协议，由死亡态输入触发（见 UIStateGame）。
-		if (Stage::get().get_player().get_stats().get_stat(MapleStat::Id::HP) <= 0)
+		// 服务端权威 HP=0 → 切死亡态并弹原生复活窗（UIDeathNotice，Notice/0、1）。
+		// 2026-11-25：对齐原生 v83（Angel CUIRevive / MinMS UIDeathNotice）——
+		// 死亡不再靠「按 JUMP 键」静默复活，而是 HP 归零自动弹窗，玩家点确定
+		// 回城（Notice/0）或用原地复活术（Notice/1 双钮）。此前本端只 die() 无弹窗，
+		// 死亡态玩家只能盲按 JUMP，且 ChangeMapPacket 写死 targetid=-1 被服务端拒。
+		if (Stage::get().get_player().get_stats().get_stat(MapleStat::Id::HP) <= 0
+			&& Stage::get().get_player().get_char_state() != Char::State::DIED)
+		{
 			Stage::get().get_player().die();
+
+			constexpr int32_t WHEEL_OF_DESTINY = 5510000;
+			const bool has_wheel =
+				Stage::get().get_player().get_inventory().get_total_item_count(WHEEL_OF_DESTINY) > 0;
+			const UIDeathNotice::Mode mode = has_wheel
+				? UIDeathNotice::Mode::WHEEL
+				: UIDeathNotice::Mode::TOWN;
+
+			// 回调由弹窗「确定/取消/10 分钟超时」触发，按 use_wheel 发复活请求。
+			// targetid 必须当前 mapid（不能 -1，否则服务端 ChangeMapHandler:98 拒绝）。
+			UI::get().emplace<UIDeathNotice>(mode, [](bool use_wheel) {
+				ChangeMapPacket(true, Stage::get().get_mapid(), "", use_wheel).dispatch();
+			});
+		}
 
 		UI::get().enable();
 	}

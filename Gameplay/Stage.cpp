@@ -665,18 +665,13 @@ namespace ms
 		if (state != State::ACTIVE || !playable)
 			return;
 
-		// 死亡态复活（原生 v83 逻辑，走既有 s9 ChangeMapPacket(died=true) 协议）：
-		// 角色 HP=0 切 DIED 后，按 JUMP 键（松开沿）向服务端请求复活。
-		// s9 ChangeMapHandler:98-115 收到 died=1 且 !isAlive() 时按 wheel/respawn
-		// 回村或原地复活，再由 SetField 回灌新地图 —— 客户端无需猜复活结果。
-		// 死亡态吞掉所有其它按键，避免倒地后还能放技能/开窗。
+		// 死亡态：吞掉所有按键，避免倒地后还能放技能/开窗。
+		// 2026-11-25：改为原生 v83 行为——复活不由 JUMP 键触发，而是 HP 归零时
+		// 由 ChangeStatsHandler 弹 UIDeathNotice（FOCUSED，先于本函数接住按键）；
+		// 玩家点确定/取消或等 10 分钟超时，回调里发 ChangeMapPacket(died=true, 当前mapid)。
+		// 这里只兜底吞输入：若弹窗因故未激活，死亡态也不该有任何操作。
 		if (player.get_char_state() == Char::State::DIED)
-		{
-			if (down && type == KeyType::Id::ACTION && KeyAction::actionbyid(action) == KeyAction::Id::JUMP)
-				ChangeMapPacket(true, -1, "", false).dispatch();
-
 			return;
-		}
 
 		switch (type)
 		{

@@ -211,5 +211,8 @@ namespace ms
 		std::map<int, Animation> shields;
 
 		static EnumMap<CharEffect::Id, Animation> chareffects;
+		// 2026-11-25：原生 v83 死亡墓碑下落动画（Effect/Tomb.img/fall），
+		// 切 DIED 时经 effects.add 播放，与 MinMS Char.cpp:1808-1811 同源。
+		static Animation tomb_fall;
 	};
 }
