@@ -197,6 +197,9 @@ namespace ms
 		Text blacklist_name;
 		// r3：本地拒绝列表（s9 无黑名单协议，Angel OnAdd 是客户端本地列表+广播包，
 		// 这里只做本地闭环：增加/删除/选中/行渲染；FindPlayer 仍作检索代理）。
+		// 拒绝列表本地持久化（v83 CConfig::LoadBlackList 语义，s9 无下发）。
+		void load_blacklist();
+		void save_blacklist() const;
 		std::vector<std::string> blacklist_names;
 		int32_t blacklist_selected = 0;		// 行号（1 基），0 = 无
 		static constexpr int16_t BLACKLIST_ROW_Y = 86;	// r3 oracle：none 文本顶 y86

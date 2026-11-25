@@ -682,6 +682,13 @@ namespace ms
 		AutoLogin() : BoolEntry("login.auto", "false") {}
 	};
 
+	// 好友拒绝列表（v83 CConfig::LoadBlackList 语义）：逗号分隔的角色名，
+	// s9 无下发协议，纯客户端本地持久化。上限 26（Angel BLACKLISTCNT 钳位）。
+	struct BlackList : public Configuration::StringEntry
+	{
+		BlackList() : StringEntry("chat.blacklist", "") {}
+	};
+
 	// 自动登录使用的密码（login.pass，opt-in 才生效）。
 	// 明文仅驻留配置文件与内存；不使用自动登录时留空即可。
 	struct AutoPass : public Configuration::StringEntry

@@ -109,6 +109,7 @@ namespace ms
 		{ "config.section.8",	"login.auto",			"config.comment.login.auto" },
 
 		// 聊天栏
+		{ "config.section.9",	"chat.blacklist",		"config.comment.chat.blacklist" },
 		{ "config.section.9",	"chat.max",			"config.comment.chat.max" },
 		{ "config.section.9",	"chat.x",			"config.comment.chat.x" },
 		{ "config.section.9",	"chat.y",			"config.comment.chat.y" },
@@ -258,6 +259,7 @@ namespace ms
 		settings.emplace<AutoMpPotItem>();
 		settings.emplace<AutoLogin>();
 		settings.emplace<AutoPass>();
+		settings.emplace<BlackList>();
 		settings.emplace<ChatViewMax>();
 		settings.emplace<ChatViewX>();
 		settings.emplace<ChatViewY>();

@@ -26,6 +26,7 @@
 #include "../UI.h"
 #include "../../IO/Components/MapleButton.h"
 #include "../../IO/Components/TwoSpriteButton.h"
+#include "../../Configuration.h"
 #include "../../Character/AllianceModel.h"
 #include "../../Character/BuddyListModel.h"
 #include "../../Character/GuildModel.h"
@@ -86,6 +87,8 @@ namespace ms
 
 		if (!Main)
 			Main = UserList;
+
+		load_blacklist(); // v83 CConfig::LoadBlackList：恢复本地拒绝列表
 
 		// backgrnd / backgrnd2 / backgrnd3 是三张**互斥**的底：同为 312x389、不透明占比各
 		// .988、无整行全透明，原生按页签族只画其中一张。以前在这里 emplace 进 sprites，
@@ -426,6 +429,37 @@ namespace ms
 			if (union_count_text.get_text() != cnt)
 				union_count_text.change_text(cnt);
 		}
+	}
+
+	void UIUserList::load_blacklist()
+	{
+		// v83 CConfig::LoadBlackList@0x49e303：从本地配置读回，空格/非法名过滤。
+		const std::string raw = Setting<BlackList>::get().load();
+		blacklist_names.clear();
+		size_t start = 0;
+		while (start < raw.size() && blacklist_names.size() < BLACKLIST_CAPACITY)
+		{
+			const size_t comma = raw.find(',', start);
+			const std::string name = raw.substr(start, comma == std::string::npos
+				? std::string::npos : comma - start);
+			if (!name.empty() && name.size() <= 12)
+				blacklist_names.push_back(name);
+			if (comma == std::string::npos)
+				break;
+			start = comma + 1;
+		}
+	}
+
+	void UIUserList::save_blacklist() const
+	{
+		// v83 CConfig::SaveBlackList 对应：逗号分隔写回本地配置。
+		std::string raw;
+		for (size_t i = 0; i < blacklist_names.size(); ++i)
+		{
+			if (i) raw += ',';
+			raw += blacklist_names[i];
+		}
+		Setting<BlackList>::get().save(raw);
 	}
 
 	int32_t UIUserList::self_guild_rank() const
@@ -1035,6 +1069,7 @@ namespace ms
 					auto pos = std::lower_bound(blacklist_names.begin(), blacklist_names.end(), name,
 						[](const std::string& a, const std::string& b) { return _stricmp(a.c_str(), b.c_str()) < 0; });
 					blacklist_names.insert(pos, name);
+					save_blacklist(); // v83 CConfig::SaveBlackList
 
 					if (auto chatbar = UI::get().get_element<UIChatBar>())
 						chatbar->show_message(("Blacklist: " + name).c_str(), UIChatBar::MessageType::YELLOW);
@@ -1062,6 +1097,7 @@ namespace ms
 					&& static_cast<size_t>(blacklist_selected) <= blacklist_names.size())
 				{
 					blacklist_names.erase(blacklist_names.begin() + (blacklist_selected - 1));
+					save_blacklist(); // v83 CConfig::SaveBlackList
 					blacklist_selected = 0;
 					update_blacklist_button_states();
 				}
