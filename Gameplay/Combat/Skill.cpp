@@ -220,6 +220,26 @@ namespace ms
 
 	void Skill::apply_actions(Char& user, Attack::Type type) const
 	{
+		// 三端原生对齐（MinMS Skill.cpp:491-525，Angel SendSkillUseRequest 指定action）：
+		// 爬梯/绳施法时，对「WZ 显式指定 action」的技能改播 ladder2/rope2 帧；
+		// RegularAction（无 WZ action）不重定向。
+		if (user.is_climbing() && action->is_appointed())
+		{
+			user.attack(user.get_char_state() == Char::LADDER ? "ladder2" : "rope2");
+			return;
+		}
+
+		int32_t level = user.get_skilllevel(skillid);
+		const SkillData& data = SkillData::get(skillid);
+		// 双飞斩/三连环光击破 body 必须匹配飞镖常规投掷(SWINGO1/O2 via RANGED)，
+		// 不能被陈旧 wire type 复活成 magic1/2/3 施法帧。
+		if (skillid == SkillId::LUCKY_SEVEN || skillid == SkillId::TRIPLE_THROW)
+			type = Attack::RANGED;
+		else if (skillid == SkillId::THREE_SNAILS)
+			type = Attack::MAGIC; // 三蜗牛走魔法攻击
+		else if (data.get_stats(level).matk || data.get_stats(1).matk)
+			type = Attack::MAGIC;
+
 		action->apply(user, type);
 	}
 
@@ -260,6 +280,11 @@ namespace ms
 
 		attack.ignoredef += stats.ignoredef;
 
+		// 三端原生对齐（MinMS Skill.cpp:638-641，Angel CalcDamage::PDamage 对
+		// SACRIFICE hard-skip PDD）：WZ 无 ignoredef 键，强制完全无视物理防御。
+		if (skillid == SkillId::SACRIFICE)
+			attack.ignoredef = 1.0f;
+
 		// 四源对照 A1：技能元素属性透传到攻击链，供 Mob 弱点/免疫判定。
 		attack.element = SkillData::get(skillid).get_element();
 
@@ -273,6 +298,11 @@ namespace ms
 		attack.mobcount = stats.mobcount;
 		attack.hrange = stats.hrange;
 
+		// 三端原生对齐（MinMS Skill.cpp:660-665）：三蜗牛固定伤害+必中，
+		// 走魔法攻击而非弓箭 RANGED。
+		if (skillid == SkillId::THREE_SNAILS)
+			attack.always_hit = true;
+
 		switch (attack.type)
 		{
 		case Attack::RANGED:
@@ -284,7 +314,12 @@ namespace ms
 		}
 
 		if (!stats.range.empty())
+		{
+			// 三端原生对齐（MinMS Skill.cpp:680-686）：WZ 显式 lt/rb（治疗/呐喊等）
+			// 保持轴对齐命中区，不叠加默认投射物的锥形 stepped 标记。
 			attack.range = stats.range;
+			attack.stepped_range = false;
+		}
 
 		if (projectile && !attack.bullet)
 		{

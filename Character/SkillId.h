@@ -156,7 +156,13 @@ namespace ms
 			FLASH_JUMP = 4111006,
 
 			// Night Lord
+			// 飞侠二转：幸运七/三连环光击破（原生 WZ 无 action，走飞镖 RegularAction，
+			// apply_actions 强制 RANGED，body 姿态须匹配 SWINGO1/O2）。
+			LUCKY_SEVEN = 4121006,
 			TRIPLE_THROW = 4121007,
+			// 忍者冲击 / 回马：命中后击退 / 聚怪（MinMS apply_hiteffects 同源）。
+			NINJA_STORM = 4121008,
+			BACK_SPIN_BLOW = 5101002,
 
 			// Bandit
 			MESO_EXPLOSION = 4211006,

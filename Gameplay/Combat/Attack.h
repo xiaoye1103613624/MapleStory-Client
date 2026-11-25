@@ -78,6 +78,10 @@ namespace ms
 		// 技能元素属性（WZ elemAttr 首字母 F/I/L/S/H/D；空=无属性）。
 		// 四源对照 A1：SkillData 已解析但攻击链此前未消费，补此字段供怪物弱点判定。
 		std::string element;
+		// 三端原生对齐（MinMS Attack.h）：三蜗牛等固定命中技能强制必中；
+		// stepped_range=false 表示显式 lt/rb 命中区保持轴对齐、不走默认锥形。
+		bool always_hit = false;
+		bool stepped_range = true;
 		bool toleft = false;
 	};
 

@@ -29,6 +29,10 @@ namespace ms
 		virtual ~SkillAction() {}
 
 		virtual void apply(Char& target, Attack::Type atype) const = 0;
+		// 技能 WZ 是否显式指定了 action（单手/双手/按等级）。原生 Angel
+		// SendSkillUseRequest 对「指定 action」的技能在爬梯/绳时改播 ladder2/rope2；
+		// RegularAction（无 WZ action，走武器默认）不重定向。对齐 MinMS SkillAction.h:32。
+		virtual bool is_appointed() const { return true; }
 	};
 
 	class NoAction : public SkillAction
@@ -41,6 +45,7 @@ namespace ms
 	{
 	public:
 		void apply(Char& target, Attack::Type atype) const override;
+		bool is_appointed() const override { return false; }
 	};
 
 	class SingleAction : public SkillAction

@@ -1022,6 +1022,10 @@ namespace ms
 			critical = 0.0f;
 			break;
 		}
+		// 三端原生对齐（MinMS Skill.apply_stats:660-665）：三蜗牛等固定伤害技能
+		// 强制必中（不掷命中率）。s9 只结算飘字数值，命中判定在客户端，故需本地处理。
+		if (attack.always_hit)
+			hitchance = 1.0f;
 
 		// 无视防御：把防御减免中被忽略的比例加回。原生 CalcDamage 的 PDD/MDD
 		// 分支见 notes/r001，这里按 0..1 比例线性还原，避免改动防御函数的既有语义。
