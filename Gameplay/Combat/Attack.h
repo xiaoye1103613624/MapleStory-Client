@@ -155,5 +155,8 @@ namespace ms
 		uint16_t level;
 		bool secondweapon;
 		bool flip;
+		// 施法者位置（MinMS AttackUser.h:238，Angel 命中记录 user_x+distance
+		// @0x95251c 需要）：回马等把怪聚到攻击者身侧的技能依赖此锚点。
+		Point<int16_t> position;
 	};
 }

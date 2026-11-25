@@ -165,6 +165,10 @@ namespace ms
 		// Show an effect at the mob's position
 		void show_effect(const Animation& animation, int8_t pos, int8_t z, bool flip,
 			uint16_t delay_ms = 0);
+		// 三端原生对齐（MinMS Mob.cpp:7890-7925，Angel TryDoingMeleeAttack@0x952453）：
+		// 忍者冲击按概率击退（距离有符号）、回马把命中怪聚到角色身侧固定距离。
+		void push_back(int32_t distance);
+		void gather(Point<int16_t> anchor, int32_t distance);
 		// 受击火花（Angel ShowHitEffect / MinMS show_hit_spark）：CoolHit @ 原点上方 15px
 		void show_hit_spark();
 

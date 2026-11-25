@@ -488,7 +488,8 @@ namespace ms
 			user.get_skilllevel(move.get_id()),
 			user.get_level(),
 			user.is_twohanded(),
-			!result.toleft
+			!result.toleft,
+			user.get_position()
 		};
 
 		if (result.bullet)

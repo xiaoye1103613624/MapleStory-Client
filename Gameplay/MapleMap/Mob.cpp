@@ -961,6 +961,29 @@ namespace ms
 		effects.add(Animation(coolhit), DrawArgument(spark_pos, flip), 0);
 	}
 
+	void Mob::push_back(int32_t distance)
+	{
+		// 三端原生对齐（MinMS Mob.cpp:7890-7908）：忍者冲击按概率击退，
+		// distance 有符号（负值=朝攻击者方向）。作为 HIT 反应期(30 tick)的初速冲量，
+		// 与 HIT 态自身的 0.2 hforce/tick 叠加。boss/死亡/0 距离不动。
+		if (!is_alive() || distance == 0 || boss)
+			return;
+		const int32_t hold = 30;
+		const double dir = flip ? -1.0 : 1.0;
+		phobj.hspeed += dir * (static_cast<double>(distance) / hold);
+	}
+
+	void Mob::gather(Point<int16_t> anchor, int32_t distance)
+	{
+		// 三端原生对齐（MinMS Mob.cpp:7910-7925，Angel @0x95251c）：
+		// 回马把每个命中怪放到「攻击者位置 + 固定偏移」的同一侧，聚成一列。
+		// flip 在 apply_damage 里已被置为 toleft（从怪指向攻击者），故落点对侧。
+		if (!is_alive() || distance == 0 || boss || anchor == Point<int16_t>{})
+			return;
+		const double dir = flip ? 1.0 : -1.0;
+		phobj.set_x(static_cast<double>(anchor.x()) + dir * static_cast<double>(distance));
+	}
+
 	float Mob::calculate_hitchance(int16_t leveldelta, int32_t player_accuracy) const
 	{
 		float faccuracy = static_cast<float>(player_accuracy);

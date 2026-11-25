@@ -20,6 +20,7 @@
 #include "../../Character/SkillId.h"
 #include "../../Data/SkillData.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Randomizer.h"
 #include "../../Configuration.h"
 
 #ifdef USE_NX
@@ -359,6 +360,21 @@ namespace ms
 		hiteffect->apply(user, target);
 
 		sound->play_hit();
+
+		// 三端原生对齐（MinMS Skill.cpp:735-768，Angel TryDoingMeleeAttack@0x952453）：
+		// 忍者冲击 4121008：prop 概率把目标击退，1-10级 100px、11级+ 200px。
+		Randomizer randomizer;
+		if (skillid == SkillId::NINJA_STORM)
+		{
+			const SkillData::Stats& st = SkillData::get(skillid).get_stats(user.skilllevel);
+			if (st.chance > 0.0f && randomizer.below(st.chance))
+				target.push_back(user.skilllevel >= 11 ? 200 : 100);
+		}
+		// 回马 5101002：把命中怪聚到「攻击者 + 15+rand(0..19)」同一锚点。
+		else if (skillid == SkillId::BACK_SPIN_BLOW)
+		{
+			target.gather(user.position, 15 + static_cast<int32_t>(randomizer.next_int(20)));
+		}
 	}
 
 	Animation Skill::get_bullet(const Char& user, int32_t bulletid) const
