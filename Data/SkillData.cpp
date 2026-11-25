@@ -86,13 +86,15 @@ namespace ms
 			float criticaldamage = (float)sub["criticalDamage"].get_integer(0);
 			ignoredef = (float)sub["ignoreDef"].get_integer(0) / 100;
 			float hrange = (float)sub["range"].get_real(100.0) / 100;
+			// ASSASSINATE 潜行秒数倍率上限（MinMS Stats.time，WZ time 节点）。
+			int32_t time = sub["time"].get_integer(0);
 			Rectangle<int16_t> range = sub;
 			int32_t level = string_conversion::or_default<int32_t>(sub.name(), -1);
 
 			stats.emplace(
 				std::piecewise_construct,
 				std::forward_as_tuple(level),
-				std::forward_as_tuple(damage, matk, fixdamage, mastery, attackcount, mobcount, bulletcount, bulletcost, hpcost, mpcost, chance, critical, ignoredef, hrange, range, criticaldamage)
+				std::forward_as_tuple(damage, matk, fixdamage, mastery, attackcount, mobcount, bulletcount, bulletcost, hpcost, mpcost, chance, critical, ignoredef, hrange, range, criticaldamage, time)
 			);
 		}
 

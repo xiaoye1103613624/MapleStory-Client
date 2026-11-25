@@ -174,7 +174,25 @@ namespace ms
 			TELEPORT_EVAN = 22101001,
 			// Gunslinger 激退射杀：施放时角色向后跳。s9 SkillFactory 已识别该技能，
 			// 本地位移纯客户端表现（MinMS SkillId.h:379 / Combat.cpp:2053）。
-			RECOIL_SHOT = 5201006
+			RECOIL_SHOT = 5201006,
+			// 数字层被动增幅族（s9 constants/skills 权威 ID）：
+			PIRATE_DOUBLE_SHOT = 5001003,
+			BURST_FIRE = 5210000,
+			ELEMENTAL_BOOST = 5220001,
+			HOMING_BEACON_SKILL = 5211006,
+			BULLSEYE = 5220011,
+			FLAME_THROWER = 5211004,
+			ICE_SPLITTER = 5211005,
+			ASSASSINATE = 4221001,
+			// 属性蓄力（CHARGE 元素回退用；MinMS SkillId.h:102-115 / Angel sub_7908E7）。
+			SWORD_FIRE_CHARGE = 1211003,
+			BW_FIRE_CHARGE = 1211004,
+			SWORD_ICE_CHARGE = 1211005,
+			BW_ICE_CHARGE = 1211006,
+			SWORD_LIT_CHARGE = 1211007,
+			BW_LIT_CHARGE = 1211008,
+			SWORD_HOLY_CHARGE = 1221003,
+			BW_HOLY_CHARGE = 1221004
 		};
 
 		static constexpr bool is_flash_jump(int32_t skill_id)

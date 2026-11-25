@@ -111,6 +111,8 @@ namespace ms
 		int16_t get_buff_value(Buffstat::Id stat) const;
 		// Skill id attached to active buff (0 if none)
 		int32_t get_buff_skillid(Buffstat::Id stat) const;
+		// 潜行已持续秒数（ASSASSINATE 倍率用）：无 DARKSIGHT 返回 0。
+		int32_t stealth_seconds() const;
 		// Duration ms from last GIVE_BUFF（本地明细窗倒计时用）
 		int32_t get_buff_duration(Buffstat::Id stat) const;
 
@@ -206,6 +208,9 @@ namespace ms
 		MarriageInfo marriage;
 
 		EnumMap<Buffstat::Id, Buff> buffs;
+		// DARKSIGHT 施加时刻（毫秒，steady_clock）：ASSASSINATE 潜行秒数倍率用。
+		// 不依赖 buff.duration 递减（普通 buff 只等服务端 reset），与 reset 解耦。
+		int64_t dark_sight_applied = 0;
 		ActiveBuffs active_buffs;
 		PassiveBuffs passive_buffs;
 

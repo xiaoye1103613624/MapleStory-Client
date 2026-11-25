@@ -18,10 +18,12 @@
 #include "Skill.h"
 
 #include "../../Character/SkillId.h"
+#include "../../Character/Player.h"
 #include "../../Data/SkillData.h"
 #include "../../Util/Misc.h"
 #include "../../Util/Randomizer.h"
 #include "../../Configuration.h"
+#include <algorithm>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -251,50 +253,123 @@ namespace ms
 		action->apply(user, type);
 	}
 
+	// Tier-0 被动增幅：WZ req 指向 base 技能，被动自身从不被 cast。
+	// 三端原生对齐 MinMS Skill.cpp:541-549，s9 以客户端 damage 权威结算（不吃双算）。
+	static const SkillData::Stats* passive_upgrade(const Char& user, int32_t passive_id)
+	{
+		const int32_t lv = user.get_skilllevel(passive_id);
+		if (lv <= 0)
+			return nullptr;
+		return &SkillData::get(passive_id).get_stats(lv);
+	}
+
+	// 属性蓄力码（MinMS Skill.cpp:50-69 / Angel sub_7908E7）：火2 冰1 雷3 圣5。
+	static int32_t charge_element_code(int32_t charge_skill)
+	{
+		switch (charge_skill)
+		{
+			case SkillId::SWORD_FIRE_CHARGE: case SkillId::BW_FIRE_CHARGE: return 2;
+			case SkillId::SWORD_ICE_CHARGE: case SkillId::BW_ICE_CHARGE: return 1;
+			case SkillId::SWORD_LIT_CHARGE: case SkillId::BW_LIT_CHARGE: return 3;
+			case SkillId::SWORD_HOLY_CHARGE: case SkillId::BW_HOLY_CHARGE: return 5;
+			default: return 0;
+		}
+	}
+
+	static char element_letter(int32_t code)
+	{
+		switch (code)
+		{
+			case 1: return 'I';
+			case 2: return 'F';
+			case 3: return 'L';
+			case 4: return 'S';
+			case 5: return 'H';
+			case 6: return 'D';
+			default: return 0;
+		}
+	}
+
 	void Skill::apply_stats(const Char& user, Attack& attack) const
 	{
-		attack.skill = skillid;
-
 		int32_t level = user.get_skilllevel(skillid);
 		const SkillData::Stats stats = SkillData::get(skillid).get_stats(level);
+
+		// 被动增幅族（MinMS Skill.cpp:551-575）：命中技能被对应被动升级时，
+		// 用被动等级的 damage% 替换基础 ratio；BULLSEYE 还要把攻击包 skillid
+		// 报成被动自身，否则 s9 damage check 390% vs 148% 超 1.5x 被判失败。
+		const SkillData::Stats* burst = nullptr;
+		bool report_upgrade = false;
+		if (skillid == SkillId::PIRATE_DOUBLE_SHOT)
+			burst = passive_upgrade(user, SkillId::BURST_FIRE);
+		else if (skillid == SkillId::CHARGE)
+			burst = passive_upgrade(user, SkillId::ADVANCED_CHARGE);
+		else if (skillid == SkillId::HOMING_BEACON_SKILL)
+		{
+			burst = passive_upgrade(user, SkillId::BULLSEYE);
+			report_upgrade = burst != nullptr;
+		}
+		attack.skill = report_upgrade ? SkillId::BULLSEYE : skillid;
+
+		// 元素属性透传（A1）；CHARGE 无 WZ elemAttr 时按当前属性蓄力回退。
+		attack.element = SkillData::get(skillid).get_element();
+		if (attack.element.empty() && skillid == SkillId::CHARGE)
+		{
+			const Player* player = dynamic_cast<const Player*>(&user);
+			const char letter = element_letter(player
+				? charge_element_code(player->get_buff_skillid(Buffstat::Id::WK_CHARGE)) : 0);
+			if (letter != 0)
+				attack.element = std::string(1, letter);
+		}
 
 		if (stats.fixdamage)
 		{
 			attack.fixdamage = stats.fixdamage;
+			attack.mindamage = static_cast<double>(stats.fixdamage);
+			attack.maxdamage = static_cast<double>(stats.fixdamage);
 			attack.damagetype = Attack::DMG_FIXED;
 		}
 		else if (stats.matk)
 		{
+			// pre-BB 魔法公式（MinMS CharStats.cpp:797-824 / Angel MDamage@0x791617）：
+			// min/max 用 MAD² 二次项 + skill mastery 下限，非旧的线性式。
+			const auto& cs = static_cast<const Player&>(user).get_stats();
+			const float skill_mastery = std::max(cs.get_mastery(), 0.1f + static_cast<float>(stats.mastery) * 0.05f);
 			attack.matk += stats.matk;
+			attack.mindamage = cs.get_magic_mindamage(stats.matk, skill_mastery);
+			attack.maxdamage = cs.get_magic_maxdamage(stats.matk);
 			attack.damagetype = Attack::DMG_MAGIC;
-
-			// 魔法技能用独立魔法基础值（MAD/INT/LUK），而不是武器 min/max。
-			if (attack.magicdamage > 0.0)
-			{
-				double multiplier = stats.damage > 0.0f ? stats.damage : 1.0f;
-				double base = attack.magicdamage * multiplier + stats.matk;
-				attack.mindamage = base;
-				attack.maxdamage = base;
-			}
+			attack.type = Attack::MAGIC;
 		}
 		else
 		{
-			attack.mindamage *= stats.damage;
-			attack.maxdamage *= stats.damage;
+			float ratio = burst ? burst->damage : stats.damage;
+			// ELEMENTAL_BOOST 对烈焰/寒冰喷射是加算（Angel PDamage 0x79006f）。
+			if (skillid == SkillId::FLAME_THROWER || skillid == SkillId::ICE_SPLITTER)
+				if (const SkillData::Stats* boost = passive_upgrade(user, SkillId::ELEMENTAL_BOOST))
+					ratio += boost->damage;
+			attack.mindamage *= ratio;
+			attack.maxdamage *= ratio;
 			attack.damagetype = Attack::DMG_WEAPON;
 		}
 
 		attack.critical += stats.critical;
-
 		attack.ignoredef += stats.ignoredef;
 
-		// 三端原生对齐（MinMS Skill.cpp:638-641，Angel CalcDamage::PDamage 对
-		// SACRIFICE hard-skip PDD）：WZ 无 ignoredef 键，强制完全无视物理防御。
+		// SACRIFICE 强制无视防御（Angel PDamage hard-skip PDD）。
 		if (skillid == SkillId::SACRIFICE)
 			attack.ignoredef = 1.0f;
 
-		// 四源对照 A1：技能元素属性透传到攻击链，供 Mob 弱点/免疫判定。
-		attack.element = SkillData::get(skillid).get_element();
+		// ASSASSINATE 潜行秒数倍率：min(stealth_seconds, WZ time)/3+1（整数除法，
+		// 满 3 秒才跳档；Angel PDamage 0x79028F）。
+		if (skillid == SkillId::ASSASSINATE)
+		{
+			const int32_t seconds = std::min(
+				static_cast<const Player&>(user).stealth_seconds(), stats.time);
+			const double factor = static_cast<double>(seconds / 3 + 1);
+			attack.mindamage *= factor;
+			attack.maxdamage *= factor;
+		}
 
 		// criticalDamage 是百分比（105 = +5% 暴伤），叠加到官方暴击倍率区间（基准 1.35）。
 		if (stats.criticaldamage > 100.0f)

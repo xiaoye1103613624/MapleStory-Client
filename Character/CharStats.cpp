@@ -18,6 +18,7 @@
 #include "CharStats.h"
 
 #include "StatCaps.h"
+#include <algorithm>
 
 namespace ms
 {
@@ -311,6 +312,35 @@ namespace ms
 	float CharStats::get_mastery() const
 	{
 		return mastery;
+	}
+
+	int32_t CharStats::total_magic_attack() const
+	{
+		// s9 localmagic = INT + 装备/buff MAD（Character.java:7518/7503）；MinMS 同构。
+		// 当前端 totalstats[MAGIC] 只含装备/buff MAD（不含 INT），故这里补 INT。
+		return get_total(EquipStat::Id::MAGIC) + get_total(EquipStat::Id::INT);
+	}
+
+	int32_t CharStats::get_magic_maxdamage(int32_t spell_attack) const
+	{
+		// MinMS CharStats.cpp:804-813 / s9 calcDmgMax:834 pre-BB 公式。
+		const double magic = static_cast<double>(total_magic_attack());
+		const double intellect = static_cast<double>(get_total(EquipStat::Id::INT));
+		const double spell_base = ((magic * magic) / 1000.0 + magic) / 30.0 + intellect / 200.0;
+		const double damage = spell_base * static_cast<double>(spell_attack > 0 ? spell_attack : 0);
+		return static_cast<int32_t>(std::max(1.0, damage));
+	}
+
+	int32_t CharStats::get_magic_mindamage(int32_t spell_attack, float mastery_factor) const
+	{
+		// MinMS CharStats.cpp:815-824：mastery_factor 钳 [0.1,1.0]，
+		// 二次项系数乘 mastery*0.9，得 min-max 之间的分布。
+		const double magic = static_cast<double>(total_magic_attack());
+		const double intellect = static_cast<double>(get_total(EquipStat::Id::INT));
+		const double m = std::max(0.1, std::min(static_cast<double>(mastery_factor), 1.0));
+		const double spell_base = ((magic * magic) / 1000.0 + magic * m * 0.9) / 30.0 + intellect / 200.0;
+		const double damage = spell_base * static_cast<double>(spell_attack > 0 ? spell_attack : 0);
+		return static_cast<int32_t>(std::max(1.0, damage));
 	}
 
 	float CharStats::get_critical() const

@@ -49,12 +49,14 @@ namespace ms
 			// 0 = 该技能未配置；v2 公式把它叠加到暴击倍率上。
 			float criticaldamage;
 			float hrange;
+			// WZ level/<lv>/time：ASSASSINATE 潜行秒数倍率上限（MinMS Stats.time）。
+			int32_t time;
 			Rectangle<int16_t> range;
 
 			// 默认构造：overlay_stats/ stats 的 unordered_map::operator[] 需要可默认构造的 Stats。
 			// 全字段零初始化，语义等同「该等级未配置」（get_stats 对缺失等级本就返回默认 object）。
-			constexpr Stats() : damage(0.0f), matk(0), fixdamage(0), mastery(0), attackcount(0), mobcount(0), bulletcount(0), bulletcost(0), hpcost(0), mpcost(0), chance(0.0f), critical(0.0f), ignoredef(0.0f), criticaldamage(0.0f), hrange(0.0f), range() {}
-			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range, float criticaldamage = 0.0f) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), criticaldamage(criticaldamage), hrange(hrange), range(range) {}
+			constexpr Stats() : damage(0.0f), matk(0), fixdamage(0), mastery(0), attackcount(0), mobcount(0), bulletcount(0), bulletcost(0), hpcost(0), mpcost(0), chance(0.0f), critical(0.0f), ignoredef(0.0f), criticaldamage(0.0f), hrange(0.0f), time(0), range() {}
+			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range, float criticaldamage = 0.0f, int32_t time = 0) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), criticaldamage(criticaldamage), hrange(hrange), time(time), range(range) {}
 		};
 
 		// Skill flags, unfortunately these just have to be hard-coded

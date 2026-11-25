@@ -18,6 +18,7 @@
 #include "Player.h"
 
 #include <nlnx/nx.hpp>
+#include <chrono>
 
 #include "CombatPanelStats.h"
 #include "PlayerStates.h"
@@ -968,6 +969,11 @@ namespace ms
 
 	void Player::give_buff(Buff buff)
 	{
+		// DARKSIGHT 施加时刻（ASSASSINATE 潜行秒数倍率）：每次服务端下发重置计时。
+		if (buff.stat == Buffstat::Id::DARKSIGHT)
+			dark_sight_applied = std::chrono::duration_cast<std::chrono::milliseconds>(
+				std::chrono::steady_clock::now().time_since_epoch()).count();
+
 		buffs[buff.stat] = buff;
 
 		// 视觉开关（纯表现层）：分身残影随 SHADOWPARTNER 生效。
@@ -982,6 +988,8 @@ namespace ms
 	void Player::cancel_buff(Buffstat::Id stat)
 	{
 		buffs[stat] = {};
+		if (stat == Buffstat::Id::DARKSIGHT)
+			dark_sight_applied = 0;
 
 		if (stat == Buffstat::Id::SHADOWPARTNER)
 			set_shadowpartner(false);
@@ -1003,6 +1011,18 @@ namespace ms
 	int32_t Player::get_buff_skillid(Buffstat::Id stat) const
 	{
 		return buffs[stat].skillid;
+	}
+
+	int32_t Player::stealth_seconds() const
+	{
+		// 三端原生对齐（MinMS Player.cpp:1638-1647 / Angel 隐身计时）：
+		// 无 DARKSIGHT→0，否则返回自施加起的整秒数。
+		if (dark_sight_applied == 0)
+			return 0;
+		const int64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now().time_since_epoch()).count();
+		const int64_t elapsed = now - dark_sight_applied;
+		return elapsed > 0 ? static_cast<int32_t>(elapsed / 1000) : 0;
 	}
 
 	int32_t Player::get_buff_duration(Buffstat::Id stat) const

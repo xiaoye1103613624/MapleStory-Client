@@ -80,6 +80,10 @@ namespace ms
 		float get_resistance() const;
 		int32_t get_maxdamage() const;
 		int32_t get_mindamage() const;
+		// pre-BB 魔法伤害（MinMS CharStats.cpp:797-824）：MAD=装备MAD+INT，二次项。
+		int32_t total_magic_attack() const;
+		int32_t get_magic_maxdamage(int32_t spell_attack) const;
+		int32_t get_magic_mindamage(int32_t spell_attack, float mastery) const;
 		uint16_t get_honor() const;
 		void set_attackspeed(int8_t speed);
 		int8_t get_attackspeed() const;
