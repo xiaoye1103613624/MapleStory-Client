@@ -353,37 +353,38 @@ namespace ms
 		}
 	}
 
+	// 三端/职业设定对齐（s9 Character.calculateMaxBaseDamage + 各职业 locale）：
+	// 主属性按「职业大类」判定，而非冒险家专属号段。骑士团 1100–1500、战神 2100+、
+	// 龙神 2200+ 的职业码 id/100 是 11..15/21/22，直接 switch 会全落 default=STR，
+	// 导致炎术士(法师)/风灵使者(弓)/夜行者(飞侠)/龙神(法师) 面板主属性错成力量。
+	// 用 (id/100)%10 把职业码折回冒险家大类：1战士 2法师 3弓 4飞侠 5海盗；
+	// 双刀 430–434 → 4(飞侠/LUK) 亦正确。初心者 id=0 → default STR（沿用原行为）。
+	static EquipStat::Id primary_for_class(uint16_t cls, Weapon::Type w)
+	{
+		switch (cls)
+		{
+			case 2:  return EquipStat::Id::INT;           // 法师系（含炎术士/龙神）
+			case 3:  return EquipStat::Id::DEX;           // 弓手系（含风灵使者）
+			case 4:  return EquipStat::Id::LUK;           // 飞侠系（含夜行者/双刀）
+			case 5:  return (w == Weapon::Type::GUN) ? EquipStat::Id::DEX : EquipStat::Id::STR; // 海盗
+			default: return EquipStat::Id::STR;           // 战士系（含魂骑士/战神）
+		}
+	}
+
 	EquipStat::Id Job::get_primary(Weapon::Type weapontype) const
 	{
-		switch (id / 100)
-		{
-			case 2:
-				return EquipStat::Id::INT;
-			case 3:
-				return EquipStat::Id::DEX;
-			case 4:
-				return EquipStat::Id::LUK;
-			case 5:
-				return (weapontype == Weapon::Type::GUN) ? EquipStat::Id::DEX : EquipStat::Id::STR;
-			default:
-				return EquipStat::Id::STR;
-		}
+		return primary_for_class(static_cast<uint16_t>((id / 100) % 10), weapontype);
 	}
 
 	EquipStat::Id Job::get_secondary(Weapon::Type weapontype) const
 	{
-		switch (id / 100)
+		switch ((id / 100) % 10)
 		{
-			case 2:
-				return EquipStat::Id::LUK;
-			case 3:
-				return EquipStat::Id::STR;
-			case 4:
-				return EquipStat::Id::DEX;
-			case 5:
-				return (weapontype == Weapon::Type::GUN) ? EquipStat::Id::STR : EquipStat::Id::DEX;
-			default:
-				return EquipStat::Id::DEX;
+			case 2:  return EquipStat::Id::LUK;
+			case 3:  return EquipStat::Id::STR;
+			case 4:  return EquipStat::Id::DEX;
+			case 5:  return (weapontype == Weapon::Type::GUN) ? EquipStat::Id::STR : EquipStat::Id::DEX;
+			default: return EquipStat::Id::DEX;
 		}
 	}
 }
