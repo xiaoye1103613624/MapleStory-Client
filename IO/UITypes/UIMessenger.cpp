@@ -408,6 +408,36 @@ namespace ms
 		if (text.empty() || !in_room_)
 			return;
 
+		// 三端原生对齐（Angel CUIMessenger::HandleSlashCommand@0x851ae2）：
+		// /q /qq → TryDelete（退出聊天室）；/invite <名字> → SendInviteMsg。
+		// 斜杠指令不进聊天历史、不发包当普通聊天。
+		if (text.size() >= 2 && text[0] == '/')
+		{
+			std::string cmd = text.substr(1);
+			if (cmd == "q" || cmd == "qq")
+			{
+				LOG(LOG_DEBUG, "UIMessenger: slash /q -> leave");
+				leave_room();
+				return;
+			}
+			const std::string invite_prefix = "invite";
+			if (cmd.size() > invite_prefix.size()
+				&& cmd.compare(0, invite_prefix.size(), invite_prefix) == 0
+				&& cmd[invite_prefix.size()] == ' ')
+			{
+				std::string name = cmd.substr(invite_prefix.size() + 1);
+				// 去首尾空格
+				while (!name.empty() && name.back() == ' ') name.pop_back();
+				if (!name.empty())
+				{
+					LOG(LOG_DEBUG, "UIMessenger: slash /invite " << name);
+					MessengerInvitePacket(name).dispatch();
+					append_chat(Locale::format("messenger.invited", name));
+					return;
+				}
+			}
+		}
+
 		std::string self = "Me";
 
 		if (local_pos >= 0 && static_cast<size_t>(local_pos) < SLOT_COUNT && slots[static_cast<size_t>(local_pos)].occupied)

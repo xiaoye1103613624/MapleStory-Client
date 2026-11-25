@@ -22,6 +22,7 @@ namespace ms
 	UIPartySearch::UIPartySearch() :
 		has_assets(false),
 		searching(false),
+		held(false),
 		min_level(1),
 		max_level(30),
 		jobs_mask(0x7FFFFFFF),
@@ -112,19 +113,37 @@ namespace ms
 		LOG(LOG_DEBUG, "UIPartySearch: START min=" << min_level << " max=" << max_level);
 		// members 字段服务端忽略；jobs 全职业位掩码
 		PartySearchStartPacket(min_level, max_level, 6, jobs_mask).dispatch();
+		held = false; // 重新开始搜索 → 退出原生 state=2 暂挂态
 		set_searching(true);
+	}
+
+	void UIPartySearch::hold_search()
+	{
+		// 三端原生对齐（Angel TabPartySearch::HoldSearch@0x879364）：
+		// 只发注销包（与 Stop 同包），但置 state=2 并保留报名设置与窗口——
+		// "暂挂"不是"停止"。s9 侧没有独立 opcode，靠本地态区分。
+		if (!searching)
+			return;
+		LOG(LOG_DEBUG, "UIPartySearch: HOLD (keep settings)");
+		PartySearchStopPacket().dispatch();
+		held = true;
+		set_searching(false);
 	}
 
 	void UIPartySearch::stop_search()
 	{
-		if (!searching)
+		// 三端原生对齐（Angel TabPartySearch::StopSearch@0x8793a1）：
+		// 清设置+关窗+state=0，同样发注销包。当前端无独立重置面板，
+		// 关窗由调用方 toggle_active 处理；这里清暂挂态与搜索态。
+		if (!searching && !held)
 		{
 			LOG(LOG_DEBUG, "UIPartySearch: STOP (not searching)");
 			return;
 		}
 
-		LOG(LOG_DEBUG, "UIPartySearch: STOP");
+		LOG(LOG_DEBUG, "UIPartySearch: STOP (clear all)");
 		PartySearchStopPacket().dispatch();
+		held = false;
 		set_searching(false);
 	}
 
@@ -167,9 +186,10 @@ namespace ms
 		} else if (keycode == 'X' || keycode == 'x' || keycode == 'P' || keycode == 'p') {
 			stop_search();
 		} else if (keycode == 'R' || keycode == 'r') {
-			
+			// R/J 软键：Angel v83 IDA 未找到 CUIPartySearch 对应具名 handler
+			// （仅 StartSearch@0xa12073），不臆造语义。保留空分支等真机取证。
 		} else if (keycode == 'J' || keycode == 'j') {
-			
+			// 同上：不臆造发包。原生若有加入语义需候选选中态，当前端无该状态。
 		}
 	}
 
@@ -191,9 +211,12 @@ namespace ms
 				start_search();
 				break;
 			case Buttons::BtStop:
-			case Buttons::BtPause:
-				// s9 无独立 Pause；Pause ≡ Stop（UPDATE 注销）
+				// Angel 6002 StopSearch：清设置+关窗+state=0
 				stop_search();
+				break;
+			case Buttons::BtPause:
+				// Angel 6001 HoldSearch@0x879364：暂挂（保留设置/窗口，仅发注销包）
+				hold_search();
 				break;
 			case Buttons::BtReg:
 				// PARTY_SEARCH_REGISTER(220) 在 s9 为空 stub → Start 代理（与 SoftKey S 一致）

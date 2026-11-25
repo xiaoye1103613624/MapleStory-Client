@@ -42,10 +42,14 @@ namespace ms
 		};
 
 		void start_search();
+		// 三端原生对齐（Angel TabPartySearch@0x879364/0x8793a1）：
+		// hold=暂挂（保留报名设置/窗口，仅发注销包），stop=停止（清设置+关窗）。
+		void hold_search();
 		void stop_search();
 
 		bool has_assets;
 		bool searching;
+		bool held; // 原生 state=2：暂挂（保留设置），区别于 stop 的 state=0
 		int32_t min_level;
 		int32_t max_level;
 		int32_t jobs_mask;
